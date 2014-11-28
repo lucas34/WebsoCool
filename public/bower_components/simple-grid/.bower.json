@@ -1,0 +1,33 @@
+{
+  "name": "simple-grid",
+  "version": "0.1.1",
+  "homepage": "https://github.com/ricogallo/simple-grid",
+  "authors": [
+    "Riccardo Gueli Alletti <riccardo.gueli.alletti@gmail.com>"
+  ],
+  "description": "a simple responsive grid system",
+  "main": "grid.css",
+  "keywords": [
+    "grid",
+    "css",
+    "responsive"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.1.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.1",
+    "commit": "573f1e73b8ec6bf721d900f653973d63051f32f5"
+  },
+  "_source": "git://github.com/ricogallo/simple-grid.git",
+  "_target": "~0.1.1",
+  "_originalSource": "simple-grid",
+  "_direct": true
+}
