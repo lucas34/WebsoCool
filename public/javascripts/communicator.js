@@ -1,47 +1,37 @@
 var communicator = new function () {
     var self = this;
 
-    var method = new function() {
+    self.method = new function() {
         var self = this;
+        var interval_id = null;
 
-        self.polling = 0;
-        self.long_polling = 1;
-        self.websocket = 2;
-    }();
-
-    self.method = method;
-    self.last_update = 0;
-
-    var interval_id = null;
-    self.switchTo = function(method_id) {
-        (function () {
+        var clear = function () {
             if(interval_id !== null) {
                 clearInterval(interval_id);
             }
 
             interval_id = null;
-        })();
+        };
 
-        if(method_id === method.polling) {
+        self.polling = function () {
             interval_id = setInterval(function() {
                 $.ajax({
-                        type: "GET",
-                        url: "/api/polling",
-                        data: { last_update: self.last_update }
-                        }).done(function(data) {
-                        self.last_update = data.date;
+                    type: "GET",
+                    url: "/api/messages/polling",
+                    data: { last_update: self.last_update }
+                }).done(function(data) {
+                    self.last_update = data.date;
 
-                        self.onMessage(data.from, data.chat, data.content)
+                    self.onMessage(data.from, data.chat, data.content)
                 });
             }, 10000); // 10s
-        }
+        };
 
-
-        if(method_id === method.long_polling) {
+        self.long_polling = function () {
             var infinity = function() {
                 $.ajax({
                     type: "GET",
-                    url: "/api/long-polling",
+                    url: "/api/messages/long-polling",
                     data: { last_update: self.last_update }
                 }).done(function(data) {
                     self.last_update = data.date;
@@ -54,9 +44,64 @@ var communicator = new function () {
             };
 
             infinity();
-        }
+        };
 
-        if(method_id === method.websocket) {
+        self.websocket = function () {
+            // TODO
+        };
+    }();
+
+    self.last_update = 0;
+    self.user = null;
+    self.rooms = [];
+
+    self.switchTo = function (method) {
+        method();
+    };
+
+    self.authenticate = function (name) {
+        $.ajax({
+            type: "POST",
+            url: "/api/authenticate",
+            data: { name: name }
+        }).done(function(data) {
+
+            user = data
+        });
+    };
+
+    self.createUser = function (name) {
+        $.ajax({
+            type: "POST",
+            url: "/api/create/user",
+            data: { name: name }
+        }).done(function(data) {
+
+            console.log(data);
+            if(data.id !== -1) {
+                self.user = {
+                    id: data.id,
+                    name: name
+                };
+            }
+        });
+    };
+
+    self.createRoom = function (name) {
+        if(self.user !== null) {
+            $.ajax({
+                type: "POST",
+                url: "/api/create/room",
+                data: { name: name, user: self.user.id }
+            }).done(function(data) {
+
+                if(data.id !== -1) {
+                    rooms.push({
+                        id: data.id,
+                        name: name
+                    });
+                }
+            });
         }
     };
 
