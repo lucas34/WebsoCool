@@ -164,11 +164,19 @@ formManager.prototype = {
 		view.message.add("Lucas",message, view.room.current);		
 		$("#message").val("");
 
+
+		for(var i=0;i< 50;i++){
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+		}
 		// CONNECTOR SEND MESSAGE (message)
 	},
 
 	newRoom : function(){
+
 		var room = $("#create_room").val();
+		
+		/*
 		var idRoom = room.replace(/\s+/g, '');
 			idRoom = idRoom.replace(/'+/g, '');
 			idRoom = idRoom.replace(/"+/g, '');
@@ -178,7 +186,8 @@ formManager.prototype = {
 			idRoom = idRoom.replace(/&+/g, '_');
 			idRoom = idRoom.replace(/=+/g, '_');
 			idRoom = idRoom.replace(/²+/g, '_');
-
+		*/
+		var idRoom = getUniqueID();
 		view.room.add(idRoom,room);
 		$("#create_room").val("");
 
@@ -242,15 +251,16 @@ function settingManager(){
 
 	}
 
-	this.username = "Lucas";
+	this.username = "guest";
 }
 
 settingManager.prototype = {
 
 	show : function(){
 		$("#settings_manager").show();
-		$("#left_box").hide();
-		
+		$(".left").hide();
+		$("#messages").hide();
+		$("#input_message").hide();
 		$("#peoples_room_"+view.room.current).hide();
 		$("#messages_room_"+view.room.current).hide();
 
@@ -264,6 +274,8 @@ settingManager.prototype = {
 	hide : function(){
 		$("#settings_manager").hide();
 		$("#left_box").show();
+		$("#messages").show();
+		$("#input_message").show();
 
 		$("#settings_tab").css("background-color",view.setting.color.tab);
 
@@ -304,25 +316,31 @@ var init = function (){
 	 * Create room
 	 * params : ID Room, Name
 	 */
-	view.room.add("Master","Master Room");
-	view.room.add("Friends","Friends");
+
+	var id1 = getUniqueID();
+	view.room.add(id1,"Master Room");
+
+	var id2 = getUniqueID();
+	view.room.add(id2,"Friends");
+
+	var id3 = getUniqueID();
 	view.room.add("Other", "Other");
 
 	/*
 	 *  Add user in a room
 	 *	params : Username, ID Room
 	 */
-	view.user.addInRoom("Anthony","Master");
-	view.user.addInRoom("Fred","Friends");
-	view.user.addInRoom("Cyrille","Friends");
+	view.user.addInRoom("Anthony",id1);
+	view.user.addInRoom("Fred",id2);
+	view.user.addInRoom("Cyrille",id2);
 
 
 	/*
 	 *  add Message in a room
 	 *	params : Username, message, ID Room
 	 */
-	view.message.add("Cyrille","Coucou","Friends");
-	view.message.add("Fred","Bonjour","Friends");
+	view.message.add("Cyrille","Coucou",id2);
+	view.message.add("Fred","Bonjour",id2);
 }();
 
 
@@ -342,6 +360,13 @@ $("#create_room").keypress(function(event) {
 	if (event.which == 13) {
 		event.preventDefault();
 		view.form.newRoom();				 
+	}
+});
+
+$("#message").keypress(function(event) {
+	if (event.which == 13) {
+		event.preventDefault();
+		view.form.newMessage();				 
 	}
 });
 

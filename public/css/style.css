@@ -1,11 +1,23 @@
-body {
-  margin: 50px;
+html {
+	height:70%
+
+}
+
+body{
+  margin-left: 50px;
+  margin-right: 50px;
+
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  height:380px;
+  background-color:#aaa;
+  height:100%;
 }
 
 a {
   color: #00B7FF;
+}
+
+h2 {
+	margin-bottom:0px;
 }
 
 .room {
@@ -22,13 +34,27 @@ a {
 #box {
 	margin:0px;
 	height:100%;
-	border: 1px solid black;
 
 
 }
 
 .left {
-	padding:5px;
 	border-right: 1px solid black;
-	height:97%
+	height:100%;
+	overflow:auto;
+	background-color:#fff
+}
+
+#messages{
+	overflow:auto;
+	border-right: 1px solid black;
+	background-color:#fff;
+	height:100%;
+
+}
+
+#settings_manager{
+	background-color:#fff;
+	height:100%;
+	overflow:auto;
 }
