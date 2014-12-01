@@ -3,12 +3,18 @@
  */
 function roomManager(){
 	this.current = "";
+
+	this.rooms = new Array();
 }
 
 roomManager.prototype = {
 
 	add : function (id,name){
 
+		if(jQuery.inArray(id,view.room.rooms) != -1){
+			alert('Room already exist !!');
+			return;
+		}
 
 		// Create tab
 		var formatID = "'"+id+"'";
@@ -33,6 +39,8 @@ roomManager.prototype = {
 		 */
 		view.user.addMeInRoom(id); 
 
+		view.room.rooms.push(id)
+
 		if(view.room.current == ""){
 			view.room.set(id);
 		}
@@ -42,8 +50,6 @@ roomManager.prototype = {
 	 *	Go to the room
 	 */
 	set : function (room){
-
-		console.log("go to "+room);
 
 		// Hide previous
 		if(view.room.current == "setting"){
@@ -77,12 +83,15 @@ roomManager.prototype = {
 
 	remove : function(room){
 
+		var position = jQuery.inArray(room,view.room.rooms);
+		view.room.rooms.splice(position,1);
+
 		$("#messages_room_"+room).remove();
 		$("#tab_room_"+room).remove();
 		$("#peoples_room_"+room).remove();
 
 		if(view.room.current == room){
-			var nextIdRoom =  $("#rooms").children().eq(1).attr('id').substring(9);
+			var nextIdRoom =  $("#rooms").children().eq(0).attr('id').substring(9);
 			console.log("Set : "+nextIdRoom);
 			view.room.set(nextIdRoom);
 		}
@@ -150,12 +159,30 @@ function formManager(){}
 
 formManager.prototype = {
 
-	submit : function(){
-		var message = $("#input").val()
+	newMessage : function(){
+		var message = $("#message").val()
 		view.message.add("Lucas",message, view.room.current);		
-		$("#input").val("");
+		$("#message").val("");
 
 		// CONNECTOR SEND MESSAGE (message)
+	},
+
+	newRoom : function(){
+		var room = $("#create_room").val();
+		var idRoom = room.replace(/\s+/g, '');
+			idRoom = idRoom.replace(/'+/g, '');
+			idRoom = idRoom.replace(/"+/g, '');
+			idRoom = idRoom.replace(/\/+/g, '_');
+			idRoom = idRoom.replace(/\(+/g, '_');
+			idRoom = idRoom.replace(/\)+/g, '_');
+			idRoom = idRoom.replace(/&+/g, '_');
+			idRoom = idRoom.replace(/=+/g, '_');
+			idRoom = idRoom.replace(/²+/g, '_');
+
+		view.room.add(idRoom,room);
+		$("#create_room").val("");
+
+
 	}
 
 }
@@ -306,3 +333,16 @@ var init = function (){
  *	- Lors de la création de la 1er room, elle sera automatique la 1er à s'afficher via (view.room.set())
  *	- Si tu ajoute un message dans une room et que tu n'es pas dedant la couleur de l'onglet change
  */
+
+
+/*
+ *	Tools
+ */
+$("#create_room").keypress(function(event) {
+	if (event.which == 13) {
+		event.preventDefault();
+		view.form.newRoom();				 
+	}
+});
+
+

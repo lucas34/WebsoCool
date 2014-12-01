@@ -3,8 +3,12 @@ extends layout
 block content
   h2 
     b #{title} Chat
-  div(class="section group", id="rooms")
+  div(class="section group")
     div(id="settings_tab", class="col span_1_of_12 room",onclick="view.setting.show()") Settings
+    div(id="rooms")
+    div(id="settings_tab", class="col span_1_of_12 room", style="padding:0px;height:30px")
+      input(id="create_room",style="height:18px;width:100px")
+
 
  
   div(class="section group",id="box")
@@ -18,7 +22,7 @@ block content
     div(class="col span_10_of_12")
       div(id="messages_room")
       div(id="settings_manager")
-        span Settings : <br /><br /> 
+        <br /><br /> 
         span Tab : 
         input(type="color",id="color_tab",onchange="view.setting.color.update.tab()")
         <br /><br />span Notification : 
@@ -26,7 +30,7 @@ block content
         <br /><br />span Selected : 
         input(type="color",id="color_selected",onchange="view.setting.color.update.selected()")
   div()
-    input(id="input",style="width:80%")
-    input(type="submit", style="margin-left:10px",onclick="view.form.submit()")
+    input(id="message",style="width:80%")
+    input(type="submit", style="margin-left:10px",onclick="view.form.newMessage()")
 
 
