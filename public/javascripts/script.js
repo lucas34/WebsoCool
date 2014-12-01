@@ -210,20 +210,45 @@ function settingManager(){
 
 		this.notification = "#fa00fa";
 		this.selected = "#ff0000";
-		this.tab = "#A0F300";
+		this.tab = "#a0f300";
 
 
 		var self = this;
 		this.update = new function(){
 			this.notification = function(){
+
+				var oldColor = self.notification;
 				self.notification = $("#color_notify").val();
+
+				$("#rooms").children().each(function(i,y){
+
+					var bg = getBgColorHex($(this));
+					if(bg == oldColor){
+						 $(this).css("background-color",self.notification);
+					}else{
+						console.log(bg+"#"+oldColor);
+					}
+				})
+
 			}
 			this.selected = function(){
 				self.selected = $("#color_selected").val();
+				$("#settings_tab").css("background-color",self.selected);
 			}
 
 			this.tab = function(){
+				var oldColor = self.tab;
 				self.tab = $("#color_tab").val();
+				$("#rooms").children().each(function(i,y){
+
+					var bg = getBgColorHex($(this));
+					if(bg == oldColor){
+						 $(this).css("background-color",self.tab);
+					}else{
+						console.log(bg+"#"+oldColor);
+					}
+				})
+				
 			}
 
 		}
