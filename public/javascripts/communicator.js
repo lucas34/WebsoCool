@@ -59,7 +59,6 @@ var communicator = new function () {
     }(self);
 
     self.last_update = 0;
-    self.user = null;
     self.rooms = [];
 
     self.rooms.push({
@@ -90,23 +89,22 @@ var communicator = new function () {
         }).done(function(data) {
 
             if(data.id !== -1) {
-                self.user = {
-                    id: data.id,
-                    name: name
-                };
+                user.id = data.id,
+                user.name = name
             }
+           
         });
     };
 
     self.createRoom = function (name) {
-        if(self.user !== null) {
+        if(user.id !== null) {
             $.ajax({
                 type: "POST",
                 url: "/api/create/room",
-                data: { name: name, user: self.user.id }
+                data: { name: name, user: user.id }
             }).done(function(data) {
                 if(data !== null) {
-                    rooms.push({
+                    self.rooms.push({
                         id: data.id,
                         name: name
                     });
@@ -118,11 +116,11 @@ var communicator = new function () {
     self.sendMessage = function (content, room) {
         room = room || { id: 0};
 
-        if(self.user !== null) {
+        if(user.id !== null) {
             $.ajax({
                 type: "POST",
                 url: "/api/post/message",
-                data: { content: content, user: self.user.id, room: room.id }
+                data: { content: content, user: user, room: room.id }
             }).done(function(data) {
                 if(data !== null) {
                     console.log("ok");
@@ -132,6 +130,8 @@ var communicator = new function () {
     };
 
     self.onMessage = function (from_id, chat_id, content) {
+		view.message.add(from_id,content,chat_id);
+
         console.log("Dans le chat <" + chat_id + "> L'utilisateur <" + from_id + "> a écrit : " + content);
     }
 }();

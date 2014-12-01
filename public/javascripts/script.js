@@ -9,7 +9,7 @@ function roomManager(){
 
 roomManager.prototype = {
 
-	add : function (id,name){
+	add : function (id,name, master){
 
 		if(jQuery.inArray(id,view.room.rooms) != -1){
 			alert('Room already exist !!');
@@ -19,8 +19,15 @@ roomManager.prototype = {
 		// Create tab
 		var formatID = "'"+id+"'";
 		var onClick = 'view.room.remove('+formatID+')';
-		var html = '<div class="col span_1_of_12 room" style="background-color:'+view.setting.color.tab+'" id="tab_room_'+id+'">'+
-		'<span onclick="view.room.set('+formatID+')">'+name+'</span>  <img src="images/close.png" onclick="'+onClick+'" /></div>';
+		var html = '<div class="col span_1_of_12 room" style="background-color:'+view.setting.color.tab+'" id="tab_room_'+id+'">';
+			html += '<span onclick="view.room.set('+formatID+')">'+name+'</span>';
+		
+		if(master){
+			html += "</div>"
+		}else{
+			html += '<img src="images/close.png" onclick="'+onClick+'" /></div>';
+		}
+	
 		$("#rooms").append(html);
 
 		// Create People block
@@ -44,6 +51,12 @@ roomManager.prototype = {
 		if(view.room.current == ""){
 			view.room.set(id);
 		}
+
+
+		/*
+		 *	Communication
+		 */
+		communicator.createRoom(id)
 	},
 
 	/*
@@ -71,6 +84,11 @@ roomManager.prototype = {
 		}
 
 		view.room.current = room;
+
+		/*
+		 *	Communication
+		 */
+
 
 	},
 
@@ -125,7 +143,7 @@ userManager.prototype = {
 	},
 
 	addMeInRoom : function(room){
-		var html = '<div class="'+view.setting.username+'"> <img src="images/friend.png" /><b>'+view.setting.username+'</b></div>';
+		var html = '<div class="'+user.name+'"> <img src="images/friend.png" /><b>'+user.name+'</b></div>';
 		$('#peoples_room_'+room).append(html);
 	},
 
@@ -144,13 +162,20 @@ function messageManager(){}
 
 messageManager.prototype = {
 
-	add : function(username, message, room){
+	add : function(message, room){
 
-		$("#messages_room_"+room).append("<b>"+username+"</b> : "+message+"<br />");
+		$("#messages_room_"+room).append("<b>"+user.name+"</b> : "+message+"<br />");
+		console.log(user);
+
 
 		if(view.room.current != room){
 			view.room.notify(room);
 		}
+
+		/*
+		 *	Communication
+		 */
+		communicator.sendMessage(message,room);
 	}
 
 }
@@ -163,16 +188,10 @@ function formManager(){}
 formManager.prototype = {
 
 	newMessage : function(){
-		var message = $("#message").val()
-		view.message.add("Lucas",message, view.room.current);		
+		var message = $("#message").val().htmlEncode();
+		view.message.add(message, view.room.current);		
 		$("#message").val("");
 
-
-		for(var i=0;i< 50;i++){
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-		}
-		// CONNECTOR SEND MESSAGE (message)
 	},
 
 	newRoom : function(){
@@ -180,7 +199,7 @@ formManager.prototype = {
 		var room = $("#create_room").val();
 
 		var idRoom = getUniqueID();
-		view.room.add(idRoom,room);
+		view.room.add(idRoom,room.htmlEncode());
 		$("#create_room").val("");
 
 
@@ -263,8 +282,6 @@ function settingManager(){
 		}
 
 	}
-
-	this.username = "guest";
 }
 
 settingManager.prototype = {
@@ -312,32 +329,26 @@ var view = new function (){
 
 
 
-
-
 /*
  * Exemples d'utilisation
  */
 var init = function (){
 
-	/*
-	 * 	Set my username
-	 * 	params : username
-	 */
-	view.setting.username = "Lucas";
+	user.create("Coucou");
 
 	/*
 	 * Create room
-	 * params : ID Room, Name
+	 * params : ID Room, Name, is a master room
 	 */
 
 	var id1 = getUniqueID();
-	view.room.add(id1,"Master Room");
+	view.room.add(id1,"Master Room", true);
 
 	var id2 = getUniqueID();
-	view.room.add(id2,"Friends");
+	view.room.add(id2,"Javascript", true);
 
 	var id3 = getUniqueID();
-	view.room.add("Other", "Other");
+	view.room.add(id3, "Other", false);
 
 	/*
 	 *  Add user in a room
