@@ -91,9 +91,12 @@ roomManager.prototype = {
 		$("#peoples_room_"+room).remove();
 
 		if(view.room.current == room){
-			var nextIdRoom =  $("#rooms").children().eq(0).attr('id').substring(9);
-			console.log("Set : "+nextIdRoom);
-			view.room.set(nextIdRoom);
+			if($("#rooms").children().size() == 0){
+				view.setting.show();	
+			}else{
+				var nextIdRoom =  $("#rooms").children().eq(position-1).attr('id').substring(9);
+				view.room.set(nextIdRoom);
+			}
 		}
 
 	}
@@ -175,18 +178,7 @@ formManager.prototype = {
 	newRoom : function(){
 
 		var room = $("#create_room").val();
-		
-		/*
-		var idRoom = room.replace(/\s+/g, '');
-			idRoom = idRoom.replace(/'+/g, '');
-			idRoom = idRoom.replace(/"+/g, '');
-			idRoom = idRoom.replace(/\/+/g, '_');
-			idRoom = idRoom.replace(/\(+/g, '_');
-			idRoom = idRoom.replace(/\)+/g, '_');
-			idRoom = idRoom.replace(/&+/g, '_');
-			idRoom = idRoom.replace(/=+/g, '_');
-			idRoom = idRoom.replace(/²+/g, '_');
-		*/
+
 		var idRoom = getUniqueID();
 		view.room.add(idRoom,room);
 		$("#create_room").val("");
@@ -225,8 +217,6 @@ function settingManager(){
 					var bg = getBgColorHex($(this));
 					if(bg == oldColor){
 						 $(this).css("background-color",self.notification);
-					}else{
-						console.log(bg+"#"+oldColor);
 					}
 				})
 
@@ -244,8 +234,6 @@ function settingManager(){
 					var bg = getBgColorHex($(this));
 					if(bg == oldColor){
 						 $(this).css("background-color",self.tab);
-					}else{
-						console.log(bg+"#"+oldColor);
 					}
 				})
 				
