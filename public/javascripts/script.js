@@ -8,15 +8,19 @@ function roomManager(){
 roomManager.prototype = {
 
 	add : function (id,name){
+
+		// Create tab
 		var formatID = "'"+id+"'";
-		var html = '<div class="col span_1_of_12 room" id="'+id+'" onclick="view.room.set('+formatID+')">'+name+'</div>';
+		var html = '<div class="col span_1_of_12 room" id="tab_room_'+id+'" onclick="view.room.set('+formatID+')">'+name+'</div>';
 		$("#rooms").append(html);
 
+		// Create People block
 		var html2 = '<div id="peoples_room_'+id+'"></div>';
 		$("#peoples_room").append(html2);
 		$("#peoples_room_"+id).hide()
 
 
+		// Create message block
 		var html3 = '<div id="messages_room_'+id+'"></div>';
 		$("#messages_room").append(html3);
 		$("#messages_room_"+id).hide()
@@ -31,6 +35,9 @@ roomManager.prototype = {
 		}
 	},
 
+	/*
+	 *	Go to the room
+	 */
 	set : function (room){
 		$("#peoples_room_"+view.room.current).hide();
 		$("#peoples_room_"+room).show();
@@ -38,16 +45,32 @@ roomManager.prototype = {
 		$("#messages_room_"+view.room.current).hide();
 		$("#messages_room_"+room).show();
 
-		$("#"+view.room.current).css("background-color",view.setting.color.tab);
-		$("#"+room).css("background-color",view.setting.color.selected);
-		$("#"+view.room.current)
+		$("#tab_room_"+view.room.current).css("background-color",view.setting.color.tab);
+		$("#tab_room_"+room).css("background-color",view.setting.color.selected);
+		$("#tab_room_"+view.room.current)
 
 		view.room.current = room;
 
 	},
 
+	/*
+	 *	Change color of the tab to notify a new message
+	 */
 	notify : function (room){
-		$("#"+room).css("background-color",view.setting.color.notification);
+		$("#tab_room_"+room).css("background-color",view.setting.color.notification);
+	},
+
+	remove : function(room){
+
+		$("#messages_room_"+room).remove();
+		$("#tab_room_"+room).remove();
+		$("#peoples_room_"+room).remove();
+
+		if(view.room.current == room){
+			var nextIdRoom =  $("#rooms").children().attr('id').substring(9);
+			view.room.set(nextIdRoom);
+		}
+
 	}
 
 }
@@ -64,7 +87,7 @@ userManager.prototype = {
 	/*
 	 * Delete user in all rooms
 	 */
-	remove : function (username){
+	removeInAllRooms : function (username){
 		$("."+username).remove();
 	},
 
@@ -76,6 +99,10 @@ userManager.prototype = {
 	addMeInRoom : function(room){
 		var html = '<div class="'+view.setting.username+'"> <img src="images/friend.png" /><b>'+view.setting.username+'</b></div>';
 		$('#peoples_room_'+room).append(html);
+	},
+
+	removeInRoom : function(username, room){
+		$("#peoples_room_"+room).find("."+username).remove();		
 
 	}
 
@@ -101,30 +128,17 @@ messageManager.prototype = {
 }
 
 /*
- *	Gestion du formulaire
+ *	Form manager
  */
-function form(){}
+function formManager(){}
 
-form.prototype = {
+formManager.prototype = {
 
 	submit : function(){
 		var message = $("#input").val()
 		view.message.add("Lucas",message, view.room.current);		
 		$("#input").val("");
 
-		/*
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-	view.message.add("Lucas",message, view.room.current);		
-*/
 		// CONNECTOR SEND MESSAGE (message)
 	}
 
@@ -132,10 +146,10 @@ form.prototype = {
 
 
 /*
- *	Parametres de la vue.
+ *	View settings manager
  */
 
-function setting(){
+function settingManager(){
 	this.color = new function(){
 		this.notification = "orange";
 		this.selected = "red";
@@ -146,15 +160,17 @@ function setting(){
 }
 
 /*
- *	Tout doit passer par la gestion des la vue
+ *	Need to call views beforme each action.
  */
 var view = new function (){
 
 	this.room =  new roomManager();
 	this.user = new userManager();
 	this.message = new messageManager();
-	this.setting = new setting();
-	this.form = new form();
+	this.form = new formManager();
+
+	this.setting = new settingManager();
+
 }();
 
 
@@ -162,14 +178,13 @@ var view = new function (){
 /*
  * Exemples d'utilisation
  */
-var init = new function (){
-
+var init = function (){
 
 	/*
 	 * 	Set my username
 	 * 	params : username
 	 */
-	view.setting.username = "Test";
+	view.setting.username = "Lucas";
 
 	/*
 	 * Create room
