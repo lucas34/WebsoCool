@@ -9,9 +9,12 @@ roomManager.prototype = {
 
 	add : function (id,name){
 
+
 		// Create tab
 		var formatID = "'"+id+"'";
-		var html = '<div class="col span_1_of_12 room" id="tab_room_'+id+'" onclick="view.room.set('+formatID+')">'+name+'</div>';
+		var onClick = 'view.room.remove('+formatID+')';
+		var html = '<div class="col span_1_of_12 room" style="background-color:'+view.setting.color.tab+'" id="tab_room_'+id+'">'+
+		'<span onclick="view.room.set('+formatID+')">'+name+'</span>  <img src="images/close.png" onclick="'+onClick+'" /></div>';
 		$("#rooms").append(html);
 
 		// Create People block
@@ -39,15 +42,27 @@ roomManager.prototype = {
 	 *	Go to the room
 	 */
 	set : function (room){
-		$("#peoples_room_"+view.room.current).hide();
-		$("#peoples_room_"+room).show();
 
-		$("#messages_room_"+view.room.current).hide();
+		console.log("go to "+room);
+
+		// Hide previous
+		if(view.room.current == "setting"){
+			view.setting.hide();
+		}else{
+			$("#peoples_room_"+view.room.current).hide();
+			$("#messages_room_"+view.room.current).hide();
+		}
+
+		$("#peoples_room_"+room).show();
 		$("#messages_room_"+room).show();
 
 		$("#tab_room_"+view.room.current).css("background-color",view.setting.color.tab);
 		$("#tab_room_"+room).css("background-color",view.setting.color.selected);
 		$("#tab_room_"+view.room.current)
+
+		if(view.room.current == "setting"){
+			view.setting.hide();
+		}
 
 		view.room.current = room;
 
@@ -67,7 +82,8 @@ roomManager.prototype = {
 		$("#peoples_room_"+room).remove();
 
 		if(view.room.current == room){
-			var nextIdRoom =  $("#rooms").children().attr('id').substring(9);
+			var nextIdRoom =  $("#rooms").children().eq(1).attr('id').substring(9);
+			console.log("Set : "+nextIdRoom);
 			view.room.set(nextIdRoom);
 		}
 
@@ -150,14 +166,84 @@ formManager.prototype = {
  */
 
 function settingManager(){
+
+	var __self = this;
+
 	this.color = new function(){
-		this.notification = "orange";
-		this.selected = "red";
-		this.tab = "#70AB00";	
+
+
+		this.notification = "#fa00fa";
+		this.selected = "#ff0000";
+		this.tab = "#A0F300";
+
+
+		var self = this;
+		this.update = new function(){
+			this.notification = function(){
+				self.notification = $("#color_notify").val();
+			}
+			this.selected = function(){
+				self.selected = $("#color_selected").val();
+			}
+
+			this.tab = function(){
+				self.tab = $("#color_tab").val();
+			}
+
+		}
+
+		/*
+		 *	Init function
+		 */
+		new function(){
+			/*
+			 *	Hide settings by default
+			 */
+			$("#settings_manager").hide();
+			$("#left_box").show();
+
+			/*
+			 *	Init color settings input
+			 */
+			$("#color_notify").val(self.notification);
+			$("#color_selected").val(self.selected);
+			$("#color_tab").val(self.tab);
+
+			$("#settings_tab").css("background-color",self.tab);
+
+		}
+
 	}
 
 	this.username = "Lucas";
 }
+
+settingManager.prototype = {
+
+	show : function(){
+		$("#settings_manager").show();
+		$("#left_box").hide();
+		
+		$("#peoples_room_"+view.room.current).hide();
+		$("#messages_room_"+view.room.current).hide();
+
+		$("#tab_room_"+view.room.current).css("background-color",view.setting.color.tab);
+		$("#settings_tab").css("background-color",view.setting.color.selected);
+
+		view.room.current = "setting";
+
+	},
+
+	hide : function(){
+		$("#settings_manager").hide();
+		$("#left_box").show();
+
+		$("#settings_tab").css("background-color",view.setting.color.tab);
+
+	}
+
+}
+
 
 /*
  *	Need to call views beforme each action.
@@ -170,8 +256,9 @@ var view = new function (){
 	this.form = new formManager();
 
 	this.setting = new settingManager();
+}
 
-}();
+
 
 
 

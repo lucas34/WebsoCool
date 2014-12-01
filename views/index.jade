@@ -1,20 +1,30 @@
 extends layout
 
 block content
-  h1= coucou
-  p
-  b #{title} Chat
+  h2 
+    b #{title} Chat
   div(class="section group", id="rooms")
+    div(id="settings_tab", class="col span_1_of_12 room",onclick="view.setting.show()") Settings
 
  
-  div(class="section group box")
-    div(class="col span_2_of_12 left")
+  div(class="section group",id="box")
+    div(id="left_box",class="col span_2_of_12 left")
       img(src="images/add_friend.png")
       span Invite Friends
       |<hr />
       div(id="peoples_room")
+      |<hr />
+      span Autre
     div(class="col span_10_of_12")
       div(id="messages_room")
+      div(id="settings_manager")
+        span Settings : <br /><br /> 
+        span Tab : 
+        input(type="color",id="color_tab",onchange="view.setting.color.update.tab()")
+        <br /><br />span Notification : 
+        input(type="color",id="color_notify",onchange="view.setting.color.update.notification()")
+        <br /><br />span Selected : 
+        input(type="color",id="color_selected",onchange="view.setting.color.update.selected()")
   div()
     input(id="input",style="width:80%")
     input(type="submit", style="margin-left:10px",onclick="view.form.submit()")

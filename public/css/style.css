@@ -1,7 +1,7 @@
 body {
   margin: 50px;
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  height:380px;
 }
 
 a {
@@ -11,8 +11,7 @@ a {
 .room {
 	margin-right:5px;
 	width:auto;
-	background-color:#70ab00;
-	height:20px;
+	height:18px;
 	text-align:center;
 	display: inline-block;
 	padding:3px;
@@ -20,8 +19,9 @@ a {
 	border: 1px solid black;
 }
 
-.box {
+#box {
 	margin:0px;
+	height:100%;
 	border: 1px solid black;
 
 
@@ -30,6 +30,5 @@ a {
 .left {
 	padding:5px;
 	border-right: 1px solid black;
-
-
+	height:97%
 }
