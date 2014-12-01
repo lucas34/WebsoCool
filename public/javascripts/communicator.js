@@ -1,7 +1,7 @@
 var communicator = new function () {
     var self = this;
 
-    self.method = new function() {
+    self.method = new function(communicator) {
         var self = this;
         var interval_id = null;
 
@@ -14,20 +14,26 @@ var communicator = new function () {
         };
 
         self.polling = function () {
+            clear();
             interval_id = setInterval(function() {
-                $.ajax({
-                    type: "GET",
-                    url: "/api/messages/polling",
-                    data: { last_update: self.last_update }
-                }).done(function(data) {
-                    self.last_update = data.date;
+                communicator.rooms.forEach(function(room) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/api/messages/polling",
+                        data: { last_update: communicator.last_update, room: room['id'] }
+                    }).done(function(data) {
+                        communicator.last_update = data.date;
 
-                    self.onMessage(data.from, data.chat, data.content)
+                        data.messages.forEach(function(message) {
+                            communicator.onMessage(message.from, room, message.content)
+                        });
+                    });
                 });
             }, 10000); // 10s
         };
 
         self.long_polling = function () {
+            clear();
             var infinity = function() {
                 $.ajax({
                     type: "GET",
@@ -36,7 +42,7 @@ var communicator = new function () {
                 }).done(function(data) {
                     self.last_update = data.date;
 
-                    self.onMessage(data.from, data.chat, data.content);
+                    communicator.onMessage(data.from, data.chat, data.content);
                     infinity();
                 }).fail(function (){
                     infinity();
@@ -47,13 +53,19 @@ var communicator = new function () {
         };
 
         self.websocket = function () {
+            clear();
             // TODO
         };
-    }();
+    }(self);
 
     self.last_update = 0;
     self.user = null;
     self.rooms = [];
+
+    self.rooms.push({
+        id: 0,
+        name: "L'amour est dans le pré"
+    });
 
     self.switchTo = function (method) {
         method();
@@ -77,7 +89,6 @@ var communicator = new function () {
             data: { name: name }
         }).done(function(data) {
 
-            console.log(data);
             if(data.id !== -1) {
                 self.user = {
                     id: data.id,
@@ -94,12 +105,27 @@ var communicator = new function () {
                 url: "/api/create/room",
                 data: { name: name, user: self.user.id }
             }).done(function(data) {
-
-                if(data.id !== -1) {
+                if(data !== null) {
                     rooms.push({
                         id: data.id,
                         name: name
                     });
+                }
+            });
+        }
+    };
+
+    self.sendMessage = function (content, room) {
+        room = room || { id: 0};
+
+        if(self.user !== null) {
+            $.ajax({
+                type: "POST",
+                url: "/api/post/message",
+                data: { content: content, user: self.user.id, room: room.id }
+            }).done(function(data) {
+                if(data !== null) {
+                    console.log("ok");
                 }
             });
         }
