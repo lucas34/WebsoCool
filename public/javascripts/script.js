@@ -1,33 +1,33 @@
 /*
- *	Gestion des salles de chat
+ *	Manage rooms
  */
-function room(){
+function roomManager(){
 	this.current = "";
 }
 
-room.prototype = {
+roomManager.prototype = {
 
-	add : function (room){
-		var roomName = "'"+room+"'";
-		var html = '<div class="col span_1_of_12 room" id="'+room+'" onclick="view.room.set('+roomName+')">'+room+'</div>';
+	add : function (id,name){
+		var formatID = "'"+id+"'";
+		var html = '<div class="col span_1_of_12 room" id="'+id+'" onclick="view.room.set('+formatID+')">'+name+'</div>';
 		$("#rooms").append(html);
 
-		var html2 = '<div id="peoples_room_'+room+'"></div>';
+		var html2 = '<div id="peoples_room_'+id+'"></div>';
 		$("#peoples_room").append(html2);
-		$("#peoples_room_"+room).hide()
+		$("#peoples_room_"+id).hide()
 
 
-		var html3 = '<div id="messages_room_'+room+'"></div>';
+		var html3 = '<div id="messages_room_'+id+'"></div>';
 		$("#messages_room").append(html3);
-		$("#messages_room_"+room).hide()
+		$("#messages_room_"+id).hide()
 
 		/*
 		 * Add me in the room
 		 */
-		view.user.addMeInRoom("Lucas",room); 
+		view.user.addMeInRoom(id); 
 
 		if(view.room.current == ""){
-			view.room.set(room);
+			view.room.set(id);
 		}
 	},
 
@@ -54,12 +54,12 @@ room.prototype = {
 
 
 /*
- *	Gestion des utilisateurs
+ *	Manager users
  */
 
-function user(){}
+function userManager(){}
 
-user.prototype = {
+userManager.prototype = {
 
 	/*
 	 * Delete user in all rooms
@@ -73,8 +73,8 @@ user.prototype = {
 		$('#peoples_room_'+room).append(html);
 	},
 
-	addMeInRoom : function(username,room){
-		var html = '<div class="'+username+'"> <img src="images/friend.png" /><b>'+username+'</b></div>';
+	addMeInRoom : function(room){
+		var html = '<div class="'+view.setting.username+'"> <img src="images/friend.png" /><b>'+view.setting.username+'</b></div>';
 		$('#peoples_room_'+room).append(html);
 
 	}
@@ -82,12 +82,12 @@ user.prototype = {
 }
 
 /*
- *	Gestion des messages
+ *	Manage message
  */
 
-function message(){}
+function messageManager(){}
 
-message.prototype = {
+messageManager.prototype = {
 
 	add : function(username, message, room){
 
@@ -96,6 +96,36 @@ message.prototype = {
 		if(view.room.current != room){
 			view.room.notify(room);
 		}
+	}
+
+}
+
+/*
+ *	Gestion du formulaire
+ */
+function form(){}
+
+form.prototype = {
+
+	submit : function(){
+		var message = $("#input").val()
+		view.message.add("Lucas",message, view.room.current);		
+		$("#input").val("");
+
+		/*
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+	view.message.add("Lucas",message, view.room.current);		
+*/
+		// CONNECTOR SEND MESSAGE (message)
 	}
 
 }
@@ -111,33 +141,57 @@ function setting(){
 		this.selected = "red";
 		this.tab = "#70AB00";	
 	}
+
+	this.username = "Lucas";
 }
 
 /*
  *	Tout doit passer par la gestion des la vue
  */
 var view = new function (){
-	this.currentRoom = "";
 
-	this.room =  new room();
-	this.user = new user();
-	this.message = new message();
+	this.room =  new roomManager();
+	this.user = new userManager();
+	this.message = new messageManager();
 	this.setting = new setting();
-
+	this.form = new form();
 }();
 
 
 
-
+/*
+ * Exemples d'utilisation
+ */
 var init = new function (){
-	view.room.add("Master");
-	view.room.add("Friends");
-	view.room.add("Other");
 
+
+	/*
+	 * 	Set my username
+	 * 	params : username
+	 */
+	view.setting.username = "Test";
+
+	/*
+	 * Create room
+	 * params : ID Room, Name
+	 */
+	view.room.add("Master","Master Room");
+	view.room.add("Friends","Friends");
+	view.room.add("Other", "Other");
+
+	/*
+	 *  Add user in a room
+	 *	params : Username, ID Room
+	 */
 	view.user.addInRoom("Anthony","Master");
 	view.user.addInRoom("Fred","Friends");
 	view.user.addInRoom("Cyrille","Friends");
 
+
+	/*
+	 *  add Message in a room
+	 *	params : Username, message, ID Room
+	 */
 	view.message.add("Cyrille","Coucou","Friends");
 	view.message.add("Fred","Bonjour","Friends");
 }();
