@@ -4,24 +4,16 @@ block content
   h1= coucou
   p
   b #{title} Chat
-  div(class="section group")
-    div(class="col span_1_of_12 room") Master Room
-    div(class="col span_1_of_12 room") Room2
+  div(class="section group", id="rooms")
+
  
   div(class="section group box")
     div(class="col span_2_of_12 left")
       img(src="images/add_friend.png")
       span Invite Friends
       |<hr />
-      div(class="peoples")
-        div(id="pseudo")
-          img(src="images/friend.png")
-          span
-          b Lucas
-        div(id="pseudo")
-          img(src="images/friend.png")
-          span Antho
-
-    div(class="col span_10_of_12") Onglet droit
+      div(id="peoples_room")
+    div(class="col span_10_of_12")
+      div(id="messages_room")
 
 
