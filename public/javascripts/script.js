@@ -330,10 +330,12 @@ var view = new function (){
  */
 var init = function (){
 
-	var id = getUniqueID();
-	user.create(id);
-	communicator.createUser(id);
-	communicator.switchTo(communicator.method.polling);
+
+	/*
+	 *	Init
+	 */
+	communicator.createUser("Lucas");
+	communicator.defineMethodTransfert(communicator.method.polling);
 
 	/*
 	 * Create room
@@ -364,7 +366,7 @@ var init = function (){
 	 */
 	view.message.add("Cyrille","Coucou",id2);
 	view.message.add("Fred","Bonjour",id2);
-}
+}();
 
 
 /*

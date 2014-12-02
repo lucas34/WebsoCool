@@ -16,7 +16,7 @@ var communicator = new function () {
         self.polling = function () {
             clear();
             interval_id = setInterval(function() {
-                communicator.rooms.forEach(function(room) {
+                rooms.forEach(function(room) {
                     $.ajax({
                         type: "GET",
                         url: "/api/messages/polling",
@@ -59,14 +59,29 @@ var communicator = new function () {
     }(self);
 
     self.last_update = 0;
-    self.rooms = [];
 
+
+	/*
+	 *	@Deprecated 
+	 *
     self.rooms.push({
         id: 0,
         name: "Master room"
     });
+	/*
+	 * New method : 
+	 * rooms.push(new room(id, "name"));
+	 */
 
-    self.switchTo = function (method) {
+
+
+	/*
+	 *
+	 *	API Event : protocols
+	 *
+	 */
+   
+	self.defineMethodTransfert = function (method) {
         method();
     };
 
@@ -76,10 +91,15 @@ var communicator = new function () {
             url: "/api/authenticate",
             data: { name: name }
         }).done(function(data) {
-
             user = data
         });
     };
+
+	/*
+	 *
+	 * API Event : SEND
+	 *
+	 */
 
     self.createUser = function (name) {
         $.ajax({
@@ -87,7 +107,6 @@ var communicator = new function () {
             url: "/api/create/user",
             data: { name: name }
         }).done(function(data) {
-			console.log("coucou");
             if(data.id !== -1) {
                 user.id = data.id,
                 user.name = name
@@ -95,25 +114,7 @@ var communicator = new function () {
         });
     };
 
-    self.createRoom = function (name) {
-        if(user.id !== null) {
-            $.ajax({
-                type: "POST",
-                url: "/api/create/room",
-                data: { name: name, user: user.id }
-            }).done(function(data) {
-                if(data !== null) {
-                    self.rooms.push({
-                        id: data.id,
-                        name: name
-                    });
-					view.room.add(data.id,name,false);
-                }
-            });
-        }
-    };
-
-    self.sendMessage = function (content, room) {
+	self.sendMessage = function (content, room) {
         room = room || { id: 0};
 
         if(user.id !== null) {
@@ -129,9 +130,31 @@ var communicator = new function () {
         }
     };
 
+
+    self.createRoom = function (name) {
+        if(user.id !== null) {
+            $.ajax({
+                type: "POST",
+                url: "/api/create/room",
+                data: { name: name, user: user.id }
+            }).done(function(data) {
+                if(data !== null) {
+					var room = new room(id, name);
+					romms.push(room);
+					view.room.add(room.id.name,false);
+                }
+            });
+        }
+    };
+
+
+	/*
+	 *
+	 * API Event : Receive
+	 *
+	 */
+
     self.onMessage = function (from_id, chat_id, content) {
 		view.message.add(from_id,content,chat_id);
-
-        //console.log("Dans le chat <" + chat_id + "> L'utilisateur <" + from_id + "> a écrit : " + content);
     }
 }();

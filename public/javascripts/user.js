@@ -5,26 +5,15 @@ function userManager(){
 
 }
 
-userManager.prototype = {
-
-	create : function(name){
-		user.name = name;
-		user.id = getUniqueID();
-
-	}
-
-}
-
-
 var user = new userManager();
 
 
-function room()(){
+function room(id, name){
 	
-	this.id;
-	this.name;
-
+	this.id = id;
+	this.name = name;
 }
+
 
 var rooms = new Array();
 
