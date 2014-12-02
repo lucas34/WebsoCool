@@ -9,6 +9,7 @@ var routes = require('./routes/index');
 var api = require('./routes/api');
 
 var app = express();
+var io = require('socket.io').listen(80);
 
 // New Code
 var mongo = require('mongodb');
@@ -66,6 +67,12 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
+
+// --------- Socket ------------
+io.on('connection', function (socket) {
+    console.log("hello");
+});
+// --------- Socket ------------
 
 app.listen(7070);
 

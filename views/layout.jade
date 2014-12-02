@@ -2,14 +2,16 @@ doctype html
 html
   head
     title= title
-    script(src='javascripts/communicator.js')
-    script(src='vendor/jquery.min.js')
     link(rel='stylesheet', href='vendor/grid.css')
     link(rel='stylesheet', href='/css/style.css')
   body
     block content
 
+  script(src='vendor/jquery.min.js')
+  script(src='vendor/socket.io.js')
   script(src='javascripts/lib.js')
   script(src='javascripts/user.js')
   script(src='javascripts/script.js')
   script(src='javascripts/communicator.js')
+  script(src='javascripts/connect.js')
+
