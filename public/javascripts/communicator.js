@@ -29,7 +29,7 @@ var communicator = new function () {
                         });
                     });
                 });
-            }, 10000); // 10s
+            }, 1000); // 10s
         };
 
         self.long_polling = function () {
@@ -63,7 +63,7 @@ var communicator = new function () {
 
     self.rooms.push({
         id: 0,
-        name: "L'amour est dans le pré"
+        name: "Master room"
     });
 
     self.switchTo = function (method) {
@@ -87,12 +87,11 @@ var communicator = new function () {
             url: "/api/create/user",
             data: { name: name }
         }).done(function(data) {
-
+			console.log("coucou");
             if(data.id !== -1) {
                 user.id = data.id,
                 user.name = name
-            }
-           
+			}           
         });
     };
 
@@ -108,6 +107,7 @@ var communicator = new function () {
                         id: data.id,
                         name: name
                     });
+					view.room.add(data.id,name,false);
                 }
             });
         }
@@ -120,7 +120,7 @@ var communicator = new function () {
             $.ajax({
                 type: "POST",
                 url: "/api/post/message",
-                data: { content: content, user: user, room: room.id }
+                data: { content: content, user: user.id, room: room.id }
             }).done(function(data) {
                 if(data !== null) {
                     console.log("ok");
@@ -132,6 +132,6 @@ var communicator = new function () {
     self.onMessage = function (from_id, chat_id, content) {
 		view.message.add(from_id,content,chat_id);
 
-        console.log("Dans le chat <" + chat_id + "> L'utilisateur <" + from_id + "> a écrit : " + content);
+        //console.log("Dans le chat <" + chat_id + "> L'utilisateur <" + from_id + "> a écrit : " + content);
     }
 }();

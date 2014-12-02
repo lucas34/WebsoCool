@@ -17,3 +17,15 @@ userManager.prototype = {
 
 
 var user = new userManager();
+
+
+function room()(){
+	
+	this.id;
+	this.name;
+
+}
+
+var rooms = new Array();
+
+

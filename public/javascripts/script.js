@@ -51,12 +51,6 @@ roomManager.prototype = {
 		if(view.room.current == ""){
 			view.room.set(id);
 		}
-
-
-		/*
-		 *	Communication
-		 */
-		communicator.createRoom(id)
 	},
 
 	/*
@@ -175,7 +169,7 @@ messageManager.prototype = {
 		/*
 		 *	Communication
 		 */
-		communicator.sendMessage(message,room);
+		communicator.sendMessage(message);
 	}
 
 }
@@ -198,10 +192,10 @@ formManager.prototype = {
 
 		var room = $("#create_room").val();
 
-		var idRoom = getUniqueID();
-		view.room.add(idRoom,room.htmlEncode());
-		$("#create_room").val("");
+		communicator.createRoom(room.htmlEncode());
 
+		//view.room.add(idRoom,room.htmlEncode());
+		$("#create_room").val("");
 
 	}
 
@@ -325,6 +319,8 @@ var view = new function (){
 	this.form = new formManager();
 
 	this.setting = new settingManager();
+
+
 }
 
 
@@ -334,7 +330,10 @@ var view = new function (){
  */
 var init = function (){
 
-	user.create("Coucou");
+	var id = getUniqueID();
+	user.create(id);
+	communicator.createUser(id);
+	communicator.switchTo(communicator.method.polling);
 
 	/*
 	 * Create room
@@ -365,7 +364,7 @@ var init = function (){
 	 */
 	view.message.add("Cyrille","Coucou",id2);
 	view.message.add("Fred","Bonjour",id2);
-}();
+}
 
 
 /*
