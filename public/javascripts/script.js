@@ -366,7 +366,7 @@ var init = function (){
 	 */
 	view.message.add("Cyrille","Coucou",id2);
 	view.message.add("Fred","Bonjour",id2);
-}();
+}
 
 
 /*

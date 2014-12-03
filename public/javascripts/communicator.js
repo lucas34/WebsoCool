@@ -1,6 +1,6 @@
 var communicator = new function () {
     var self = this;
-    var socket = io.connect('http://localhost:80');
+    var socket = io.connect('http://localhost:5000');
 
     self.method = new function(communicator) {
         var self = this;
@@ -126,8 +126,8 @@ var communicator = new function () {
             data: { name: name }
         }).done(function(data) {
             if(data.id !== -1) {
-                user.id = data.id,
-                user.name = name
+                user.id = data.id;
+                user.name = name;
 			}           
         });
     };

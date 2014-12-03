@@ -10,7 +10,7 @@ var routes = require('./routes/index');
 var api = require('./routes/api');
 
 var app = express();
-var io = require('socket.io').listen(80);
+var io = require('socket.io').listen(5000);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -47,6 +47,7 @@ if (app.get('env') === 'development') {
         });
     });
 }
+
 
 // production error handler
 // no stacktraces leaked to user
