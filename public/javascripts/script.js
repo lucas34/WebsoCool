@@ -199,15 +199,26 @@ formManager.prototype = {
 
 	},
 
-	username : function(){
-	
-		if(user){
-			return;
-		}
-
+	logIn : function(){
 
 		var name =  $("#username").val();
 		communicator.createUser(name.htmlEncode());
+
+		var method = $('input[name=method]:checked').val();
+		switch(method){
+			case "polling":
+				communicator.defineMethodTransfert(communicator.method.polling);
+				break;
+
+			case "long":
+				communicator.defineMethodTransfert(communicator.method.long_polling);
+				break;
+
+			case "push":
+				communicator.defineMethodTransfert(communicator.method.push);
+				break;
+		}
+
 
 		$("#username").val("");
 
@@ -409,9 +420,4 @@ $("#message").keypress(function(event) {
 	}
 });
 
-$("#username").keypress(function(event) {
-	if (event.which == 13) {
-		event.preventDefault();
-		view.form.newMessage();				 
-	}
-});
+

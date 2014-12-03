@@ -29,8 +29,17 @@ block content
         input(type="color",id="color_notify",onchange="view.setting.color.update.notification()")
         <br /><br />Selected : 
         input(type="color",id="color_selected",onchange="view.setting.color.update.selected()")
-        <br /><br />Username : 
-        input(type="text",id="username",onchange="view.form.username")
+        <br /><br /><hr />Utilisateur :<br /> 
+        input(type="text",id="username")
+        <br /><br />Type transfert :<br /><br /> 
+        input(type="radio",value="polling",name="method")
+        span Polling<br />
+        input(type="radio",value="long",name="method")
+        span Long Polling<br />
+        input(type="radio",value="push",name="method")
+        span Push<br />
+        <br />
+        input(type="submit",onclick="view.form.logIn()")
     div(style="margin-top:5px;",id="input_message")
       input(id="message",style="width:80%")
 
