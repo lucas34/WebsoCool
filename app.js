@@ -11,11 +11,6 @@ var api = require('./routes/api');
 var app = express();
 var io = require('socket.io').listen(80);
 
-// New Code
-var mongo = require('mongodb');
-var monk = require('monk');
-var db = monk('localhost:27017/chatroom');
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -36,12 +31,6 @@ app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
-});
-
-// Make our db accessible to our router
-app.use(function(req,res,next){
-    req.db = db;
-    next();
 });
 
 // error handlers
