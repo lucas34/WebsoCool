@@ -3,18 +3,17 @@
  */
 function roomManager(){
 	this.current = "";
-
-	this.rooms = new Array();
 }
 
 roomManager.prototype = {
 
 	add : function (id,name, master){
 
-		if(jQuery.inArray(id,view.room.rooms) != -1){
+		/*
+		if(jQuery.inArray(id,rooms) != -1){
 			alert('Room already exist !!');
 			return;
-		}
+		}*/
 
 		// Create tab
 		var formatID = "'"+id+"'";
@@ -46,8 +45,6 @@ roomManager.prototype = {
 		 */
 		view.user.addMeInRoom(id); 
 
-		view.room.rooms.push(id)
-
 		if(view.room.current == ""){
 			view.room.set(id);
 		}
@@ -73,7 +70,7 @@ roomManager.prototype = {
 		$("#tab_room_"+room).css("background-color",view.setting.color.selected);
 		$("#tab_room_"+view.room.current)
 
-		if(view.room.current == "setting"){
+		if(view.room.current == "setting"||view.room.current ==""){
 			view.setting.hide();
 		}
 
@@ -93,20 +90,30 @@ roomManager.prototype = {
 		$("#tab_room_"+room).css("background-color",view.setting.color.notification);
 	},
 
-	remove : function(room){
+	remove : function(id){
 
-		var position = jQuery.inArray(room,view.room.rooms);
-		view.room.rooms.splice(position,1);
+		var position = -1;
+		for(var i = 0;i<rooms.length;i++){
+			if(rooms[i].id == id){
+				position = i;
+				break;
+			}
+		}
+		
+		rooms.splice(position,1);
 
-		$("#messages_room_"+room).remove();
-		$("#tab_room_"+room).remove();
-		$("#peoples_room_"+room).remove();
+		$("#messages_room_"+id).remove();
+		$("#tab_room_"+id).remove();
+		$("#peoples_room_"+id).remove();
 
-		if(view.room.current == room){
+		if(view.room.current == id){
 			if($("#rooms").children().size() == 0){
 				view.setting.show();	
 			}else{
-				var nextIdRoom =  $("#rooms").children().eq(position-1).attr('id').substring(9);
+				if(position == 0){
+					position = 1;
+				}
+				var nextIdRoom = $("#rooms").children().eq(position-1).attr('id').substring(9);
 				view.room.set(nextIdRoom);
 			}
 		}
@@ -159,8 +166,6 @@ messageManager.prototype = {
 	add : function(message, room){
 
 		$("#messages_room_"+room).append("<b>"+user.name+"</b> : "+message+"<br />");
-		console.log(user);
-
 
 		if(view.room.current != room){
 			view.room.notify(room);
@@ -215,7 +220,7 @@ formManager.prototype = {
 				break;
 
 			case "push":
-				communicator.defineMethodTransfert(communicator.method.push);
+				communicator.defineMethodTransfert(communicator.method.websocket);
 				break;
 		}
 

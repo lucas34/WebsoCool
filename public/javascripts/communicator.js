@@ -157,9 +157,10 @@ var communicator = new function () {
                 data: { name: name, user: user.id }
             }).done(function(data) {
                 if(data !== null) {
-					var room = new room(id, name);
-					romms.push(room);
-					view.room.add(room.id.name,false);
+					console.log(data);
+					var r = new room(data.id, name);
+					rooms.push(r);
+					view.room.add(r.id,name,false);
                 }
             });
         }
