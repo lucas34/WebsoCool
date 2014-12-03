@@ -9,8 +9,6 @@ block content
       div(id="rooms")
       div(id="settings_tab", class="col span_1_of_12 room", style="padding:0px;height:30px")
         input(id="create_room",style="height:18px;width:100px")
-
-
  
     div(class="section group",id="box")
       div(id="left_box",class="col span_2_of_12 left")
@@ -31,6 +29,8 @@ block content
         input(type="color",id="color_notify",onchange="view.setting.color.update.notification()")
         <br /><br />Selected : 
         input(type="color",id="color_selected",onchange="view.setting.color.update.selected()")
+        <br /><br />Username : 
+        input(type="text",id="username",onchange="view.form.username")
     div(style="margin-top:5px;",id="input_message")
       input(id="message",style="width:80%")
 

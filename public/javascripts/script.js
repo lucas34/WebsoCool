@@ -197,8 +197,21 @@ formManager.prototype = {
 		//view.room.add(idRoom,room.htmlEncode());
 		$("#create_room").val("");
 
-	}
+	},
 
+	username : function(){
+	
+		if(user){
+			return;
+		}
+
+
+		var name =  $("#username").val();
+		communicator.createUser(name.htmlEncode());
+
+		$("#username").val("");
+
+	}
 }
 
 
@@ -259,19 +272,17 @@ function settingManager(){
 		 */
 		new function(){
 			/*
-			 *	Hide settings by default
-			 */
-			$("#settings_manager").hide();
-			$("#left_box").show();
-
-			/*
 			 *	Init color settings input
 			 */
 			$("#color_notify").val(self.notification);
 			$("#color_selected").val(self.selected);
 			$("#color_tab").val(self.tab);
+	
+			$(".left").hide();
+			$("#messages").hide();
+			$("#input_message").hide();
 
-			$("#settings_tab").css("background-color",self.tab);
+			$("#settings_tab").css("background-color",self.selected);
 
 		}
 
@@ -285,10 +296,11 @@ settingManager.prototype = {
 		$(".left").hide();
 		$("#messages").hide();
 		$("#input_message").hide();
-		$("#peoples_room_"+view.room.current).hide();
-		$("#messages_room_"+view.room.current).hide();
-
-		$("#tab_room_"+view.room.current).css("background-color",view.setting.color.tab);
+		if(view.room.current != ""){
+			$("#peoples_room_"+view.room.current).hide();
+			$("#messages_room_"+view.room.current).hide();
+			$("#tab_room_"+view.room.current).css("background-color",view.setting.color.tab);
+		}
 		$("#settings_tab").css("background-color",view.setting.color.selected);
 
 		view.room.current = "setting";
@@ -313,6 +325,8 @@ settingManager.prototype = {
  */
 var view = new function (){
 
+	var self = this;
+
 	this.room =  new roomManager();
 	this.user = new userManager();
 	this.message = new messageManager();
@@ -320,8 +334,8 @@ var view = new function (){
 
 	this.setting = new settingManager();
 
-
 }
+
 
 
 
@@ -395,4 +409,9 @@ $("#message").keypress(function(event) {
 	}
 });
 
-
+$("#username").keypress(function(event) {
+	if (event.which == 13) {
+		event.preventDefault();
+		view.form.newMessage();				 
+	}
+});
