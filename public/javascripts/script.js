@@ -24,7 +24,7 @@ roomManager.prototype = {
 		if(master){
 			html += "</div>"
 		}else{
-			html += '<img src="images/close.png" onclick="'+onClick+'" /></div>';
+			html += '<img src="images/close.png" style="margin-left:5px;" onclick="'+onClick+'" /></div>';
 		}
 	
 		$("#rooms").append(html);
@@ -224,6 +224,7 @@ formManager.prototype = {
 				break;
 		}
 
+		$("#create_tab").show();
 
 		$("#username").val("");
 
@@ -297,7 +298,8 @@ function settingManager(){
 			$(".left").hide();
 			$("#messages").hide();
 			$("#input_message").hide();
-
+			$("#create_tab").hide();
+	
 			$("#settings_tab").css("background-color",self.selected);
 
 		}
