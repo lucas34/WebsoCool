@@ -16,7 +16,28 @@ router.get('/messages/polling', function(req, res) {
 });
 
 router.get('/messages/long-polling', function(req, res) {
-  res.send('respond with a resource');
+  var user = chat.getUser(req.user);
+  var last_update = req.query.last_update;
+
+  if ((user === undefined) || (last_update === undefined)) {
+    res.send(null);
+  }
+  else {
+    var messages = [];
+    user.rooms.forEach(function (room) {
+      messages = messages.concat(chat.getListOfMessage(room, last_update));
+    });
+
+    if (messages.length > 0) {
+      res.send(messages);
+    }
+    else {
+      chat.onMessage[user.id] = function (message) {
+        req.send([message]);
+        req.end();
+      }
+    }
+  }
 });
 
 router.post('/create/user', function(req, res) {
