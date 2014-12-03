@@ -19,10 +19,6 @@ router.get('/messages/long-polling', function(req, res) {
   res.send('respond with a resource');
 });
 
-router.get('/messages/websocket', function(req, res) {
-  res.send('respond with a resource');
-});
-
 router.post('/create/user', function(req, res) {
   var name = req.body.name;
   if(name !== undefined) {

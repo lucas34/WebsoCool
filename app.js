@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var chat = require('./lib/websocool');
 
 var routes = require('./routes/index');
 var api = require('./routes/api');
@@ -58,9 +59,41 @@ app.use(function(err, req, res, next) {
 });
 
 // --------- Socket ------------
-io.on('connection', function (socket) {
-    console.log("hello");
-});
+(function() {
+    io.on('connection', function (socket) {
+        socket.on('subscribe', function (data) {
+            var user = chat.getUser(data.user);
+
+            if (user !== undefined) {
+                var messages = [];
+                user.rooms.forEach(function (room) {
+                    room.messages.forEach(function (message) {
+                        messages.push(message);
+                    });
+                });
+
+                chat.onMessage[user.id] = function (message) {
+                    var room = message.room;
+
+                    if (user.rooms.contains(room)) {
+                        socket.emit('message', message);
+                    }
+                };
+
+                socket.emit('init', messages);
+            }
+        });
+
+        socket.on('unsubscribe', function (data) {
+            var user = chat.getUser(data.user);
+            if (user !== undefined) {
+                delete chat.onMessage[user.id];
+            }
+        });
+    });
+
+}());
+
 // --------- Socket ------------
 
 app.listen(7070);

@@ -1,5 +1,6 @@
 var communicator = new function () {
     var self = this;
+    var socket = io.connect('http://localhost:80');
 
     self.method = new function(communicator) {
         var self = this;
@@ -10,11 +11,26 @@ var communicator = new function () {
                 clearInterval(interval_id);
             }
 
+            socket.emit('unsubscribe', { id : user.id });
+
             interval_id = null;
         };
 
+        (function () {
+            socket.on('init', function (messages) {
+                messages.forEach(function (message) {
+                    communicator.onMessage(message.from, room, message.content)
+                });
+            });
+
+            socket.on('message', function (message) {
+                communicator.onMessage(message.from, room, message.content)
+            });
+        })(); // Socket init
+
         self.polling = function () {
             clear();
+
             interval_id = setInterval(function() {
                 rooms.forEach(function(room) {
                     $.ajax({
@@ -34,6 +50,7 @@ var communicator = new function () {
 
         self.long_polling = function () {
             clear();
+
             var infinity = function() {
                 $.ajax({
                     type: "GET",
@@ -54,7 +71,8 @@ var communicator = new function () {
 
         self.websocket = function () {
             clear();
-            // TODO
+
+            socket.emit('subscribe', { id : user.id });
         };
     }(self);
 
