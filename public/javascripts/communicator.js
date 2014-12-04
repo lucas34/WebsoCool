@@ -212,15 +212,15 @@ var communicator = new function () {
     };
 
     self.onNewUser = function (user, room) {
-        // TODO
+       	view.user.addInRoom(user,room);
     };
 
     self.onNewRoom = function (room) {
-        // TODO
+        view.room.add(room.id,room.name,false);
     };
 
     self.onExitRoom = function (user, room) {
-        // TODO
+        view.user.removeInRoom(user,room);
     };
 
 
