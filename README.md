@@ -1,4 +1,4 @@
 WebsoCool
 =========
 
-Chat with Poolling, Long Polling and push méthods !
+Chat with Polling, Long Polling and push !
