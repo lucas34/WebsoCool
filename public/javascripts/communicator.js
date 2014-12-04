@@ -174,4 +174,18 @@ var communicator = new function () {
     self.onMessage = function (from_id, chat_id, content) {
 		view.message.add(from_id,content,chat_id);
     }
+
+    self.onNewUser = function (user, room) {
+		// TODO
+    }
+
+    self.onNewRoom = function (room) {
+		// TODO
+    }
+
+    self.onExitRoom = function (user, room) {
+		// TODO
+    }
+
+
 }();
