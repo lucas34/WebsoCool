@@ -68,10 +68,11 @@ router.post('/post/message', function(req, res) {
   var room = req.body.room;
 
   if ((content === undefined) || (user === undefined) || (room === undefined)) {
-    res.send(null);
+    res.send({ successful: false });
   }
   else {
-    res.send(chat.postMessage(user, room, content));
+    chat.postMessage(user, room, content);
+    res.send({ successful: true });
   }
 });
 

@@ -141,9 +141,7 @@ var communicator = new function () {
                 url: "/api/post/message",
                 data: { content: content, user: user.id, room: room.id }
             }).done(function(data) {
-                if(data !== null) {
-                    console.log("ok");
-                }
+                console.log(data.successful ? "ok" : "fail");
             });
         }
     };
