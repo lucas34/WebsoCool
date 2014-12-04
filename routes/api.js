@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var chat = require('../lib/websocool');
 
-/* GET users listing. */
+/* GET messages listing. */
 router.get('/messages/polling', function(req, res) {
   var room = req.query.room;
   var last_update = req.query.last_update;
@@ -40,8 +40,46 @@ router.get('/messages/long-polling', function(req, res) {
   }
 });
 
+/* Get new rooms & users */
+router.get('/rooms', function(req, res) {
+  var user = req.query.user;
+  var last_update = req.query.last_update;
+
+  if ((user === undefined) || (last_update === undefined)) {
+    res.send(null);
+  }
+  else {
+    res.send(chat.getListOfRoomsFrom(last_update, user));
+  }
+});
+
+router.get('/users', function(req, res) {
+  var last_update = req.query.last_update;
+
+  if (last_update === undefined) {
+    res.send(null);
+  }
+  else {
+    res.send(chat.getListOfUsersFrom(last_update));
+  }
+});
+
+/* Create room, user & message */
+router.post('/create/room', function(req, res) {
+  var name = req.body.name;
+
+  if(name !== undefined) {
+    var room = chat.createRoom(name);
+    res.send({ id : room.id });
+  }
+  else {
+    res.send(null);
+  }
+});
+
 router.post('/create/user', function(req, res) {
   var name = req.body.name;
+
   if(name !== undefined) {
     var user = chat.createUser(name);
     res.send({ id : user.id });
@@ -51,16 +89,6 @@ router.post('/create/user', function(req, res) {
   }
 });
 
-router.post('/create/room', function(req, res) {
-  var name = req.body.name;
-  if(name !== undefined) {
-    var room = chat.createRoom(name);
-    res.send({ id : room.id });
-  }
-  else {
-    res.send(null);
-  }
-});
 
 router.post('/post/message', function(req, res) {
   var content = req.body.content;

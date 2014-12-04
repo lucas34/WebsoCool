@@ -79,27 +79,27 @@ var communicator = new function () {
     self.last_update = 0;
 
 
-	/*
-	 *	@Deprecated 
-	 *
-    self.rooms.push({
-        id: 0,
-        name: "Master room"
-    });
-	/*
-	 * New method : 
-	 * rooms.push(new room(id, "name"));
-	 */
+    /*
+     *	@Deprecated
+     *
+     self.rooms.push({
+     id: 0,
+     name: "Master room"
+     });
+     /*
+     * New method :
+     * rooms.push(new room(id, "name"));
+     */
 
 
 
-	/*
-	 *
-	 *	API Event : protocols
-	 *
-	 */
-   
-	self.defineMethodTransfert = function (method) {
+    /*
+     *
+     *	API Event : protocols
+     *
+     */
+
+    self.defineMethodTransfert = function (method) {
         method();
     };
 
@@ -113,11 +113,11 @@ var communicator = new function () {
         });
     };
 
-	/*
-	 *
-	 * API Event : SEND
-	 *
-	 */
+    /*
+     *
+     * API Event : SEND
+     *
+     */
 
     self.createUser = function (name) {
         $.ajax({
@@ -128,11 +128,11 @@ var communicator = new function () {
             if(data.id !== -1) {
                 user.id = data.id;
                 user.name = name;
-			}           
+            }
         });
     };
 
-	self.sendMessage = function (content, room) {
+    self.sendMessage = function (content, room) {
         room = room || { id: 0};
 
         if(user.id !== null) {
@@ -155,37 +155,73 @@ var communicator = new function () {
                 data: { name: name, user: user.id }
             }).done(function(data) {
                 if(data !== null) {
-					console.log(data);
-					var r = new room(data.id, name);
-					rooms.push(r);
-					view.room.add(r.id,name,false);
+                    console.log(data);
+                    var r = new room(data.id, name);
+                    rooms.push(r);
+                    view.room.add(r.id,name,false);
                 }
             });
         }
     };
 
 
-	/*
-	 *
-	 * API Event : Receive
-	 *
-	 */
+    (function () {
+        var last_update = 0;
+
+        setInterval(function() {
+            $.ajax({
+                type: "GET",
+                url: "/api/users",
+                data: { last_update: last_update, user: user.id }
+            }).done(function(data) {
+                last_update = data.date;
+
+                data.users.forEach(function (user) {
+                    communicator.onNewUser(user);
+                });
+            });
+        }, 10000);
+    })();
+
+    (function () {
+        var last_update = 0;
+
+        setInterval(function() {
+            $.ajax({
+                type: "GET",
+                url: "/api/rooms",
+                data: { last_update: last_update }
+            }).done(function(data) {
+                last_update = data.date;
+
+                data.rooms.forEach(function (room) {
+                    communicator.onNewRoom(room);
+                });
+            });
+        }, 10000);
+    })();
+
+    /*
+     *
+     * API Event : Receive
+     *
+     */
 
     self.onMessage = function (from_id, chat_id, content) {
-		view.message.add(from_id,content,chat_id);
-    }
+        view.message.add(from_id,content,chat_id);
+    };
 
     self.onNewUser = function (user, room) {
-		// TODO
-    }
+        // TODO
+    };
 
     self.onNewRoom = function (room) {
-		// TODO
-    }
+        // TODO
+    };
 
     self.onExitRoom = function (user, room) {
-		// TODO
-    }
+        // TODO
+    };
 
 
 }();
