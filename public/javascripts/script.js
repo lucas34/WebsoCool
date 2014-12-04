@@ -7,7 +7,14 @@ function roomManager(){
 
 roomManager.prototype = {
 
-	add : function (id,name, master){
+	add : function (room){
+
+		var id = room.id;
+		var name = room.name;
+		var master = room.voidable;
+		if(master == undefined){
+			master = false;
+		}
 
 		/*
 		if(jQuery.inArray(id,rooms) != -1){

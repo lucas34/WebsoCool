@@ -8,10 +8,11 @@ function userInfo(){
 var user = new userInfo();
 
 
-function room(id, name){
+function room(id, name, bool){
 	
 	this.id = id;
 	this.name = name;
+	this.voidable = bool
 }
 
 

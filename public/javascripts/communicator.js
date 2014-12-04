@@ -128,6 +128,8 @@ var communicator = new function () {
             if(data.id !== -1) {
                 user.id = data.id;
                 user.name = name;
+				// For test.
+				self.onNewRoom(new room(0,"Master Room",true));
             }
         });
     };
@@ -158,7 +160,7 @@ var communicator = new function () {
                     console.log(data);
                     var r = new room(data.id, name);
                     rooms.push(r);
-                    view.room.add(r.id,name,false);
+				    self.onNewRoom(r);
                 }
             });
         }
@@ -216,7 +218,7 @@ var communicator = new function () {
     };
 
     self.onNewRoom = function (room) {
-        view.room.add(room.id,room.name,false);
+        view.room.add(room);
     };
 
     self.onExitRoom = function (user, room) {
