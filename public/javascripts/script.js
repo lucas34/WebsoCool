@@ -199,7 +199,6 @@ formManager.prototype = {
 
 		communicator.createRoom(room.htmlEncode());
 
-		//view.room.add(idRoom,room.htmlEncode());
 		$("#create_room").val("");
 
 	},
