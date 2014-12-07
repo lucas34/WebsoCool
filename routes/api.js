@@ -16,26 +16,26 @@ router.get('/messages/polling', function(req, res) {
 });
 
 router.get('/messages/long-polling', function(req, res) {
-  var user = chat.getUser(req.user);
+  var user = req.query.user;
+  var room = req.query.room;
   var last_update = req.query.last_update;
 
-  if ((user === undefined) || (last_update === undefined)) {
+  if ((user === undefined) || (room === undefined) || (last_update === undefined)) {
     res.send(null);
   }
   else {
-    var messages = [];
-    user.rooms.forEach(function (room) {
-      messages = messages.concat(chat.getListOfMessage(room, last_update));
-    });
-
-    if (messages.length > 0) {
-      res.send(messages);
+    var current = chat.getListOfMessage(room, last_update);
+    if(current.messages.length === 0) {
+      chat.subscribe(user, function (room, message) {
+        chat.unsubscribe(user);
+        res.send({
+          date: message.creation,
+          messages: [message.simplify()]
+        })
+      });
     }
     else {
-      chat.onMessage[user.id] = function (message) {
-        req.send([message]);
-        req.end();
-      }
+      res.send(current);
     }
   }
 });
@@ -49,7 +49,8 @@ router.get('/rooms', function(req, res) {
     res.send(null);
   }
   else {
-    res.send(chat.getListOfRoomsFrom(last_update, user));
+    rooms = chat.getListOfRoomsFrom(last_update, user);
+    res.send(rooms);
   }
 });
 

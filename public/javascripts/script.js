@@ -47,10 +47,6 @@ roomManager.prototype = {
 		$("#messages_room").append(html3);
 		$("#messages_room_"+id).hide()
 
-		/*
-		 * Add me in the room
-		 */
-		view.user.addMeInRoom(id); 
 
 		if(view.room.current == ""){
 			view.room.set(id);
@@ -127,14 +123,20 @@ roomManager.prototype = {
 
 	}
 
-}
+};
 
 
 /*
  *	Manager users
  */
 
-function userManager(){}
+function userManager(){
+	this.users = {};
+
+	this.add = function (user) {
+		this.users[user.id] = user;
+	}
+}
 
 userManager.prototype = {
 
@@ -145,22 +147,15 @@ userManager.prototype = {
 		$("."+username).remove();
 	},
 
-	addInRoom : function(username,room){
-		var html = '<div class="'+username+'"> <img src="images/friend.png" /><span>'+username+'</span></div>';
-		$('#peoples_room_'+room).append(html);
-	},
-
-	addMeInRoom : function(room){
-		var html = '<div class="'+user.name+'"> <img src="images/friend.png" /><b>'+user.name+'</b></div>';
-		$('#peoples_room_'+room).append(html);
+	addInRoom : function(user,room){
+		var html = '<div class="' + user.name + '"> <img src="images/friend.png" /><span>' + user.name + '</span></div>';
+		$('#peoples_room_' + room).append(html);
 	},
 
 	removeInRoom : function(username, room){
-		$("#peoples_room_"+room).find("."+username).remove();		
-
+		$("#peoples_room_" + room).find("."+username).remove();
 	}
-
-}
+};
 
 /*
  *	Manage message
@@ -170,21 +165,18 @@ function messageManager(){}
 
 messageManager.prototype = {
 
-	add : function(message, room){
+	post: function (content, room) {
+		communicator.sendMessage(content, room)
+	},
 
-		$("#messages_room_"+room).append("<b>"+user.name+"</b> : "+message+"<br />");
+	add: function (from, room, content) {
+		$("#messages_room_" + room.id).append("<b>" + view.user.users[from].name + "</b> : " + content + "<br />");
 
-		if(view.room.current != room){
-			view.room.notify(room);
+		if (view.room.current != room.id) {
+			view.room.notify(room.id);
 		}
-
-		/*
-		 *	Communication
-		 */
-		communicator.sendMessage(message);
 	}
-
-}
+};
 
 /*
  *	Form manager
@@ -195,7 +187,7 @@ formManager.prototype = {
 
 	newMessage : function(){
 		var message = $("#message").val().htmlEncode();
-		view.message.add(message, view.room.current);		
+		view.message.post(message, view.room.current);
 		$("#message").val("");
 
 	},
@@ -218,15 +210,15 @@ formManager.prototype = {
 		var method = $('input[name=method]:checked').val();
 		switch(method){
 			case "polling":
-				communicator.defineMethodTransfert(communicator.method.polling);
+				communicator.method.polling();
 				break;
 
 			case "long":
-				communicator.defineMethodTransfert(communicator.method.long_polling);
+				communicator.method.long_polling();
 				break;
 
 			case "push":
-				communicator.defineMethodTransfert(communicator.method.websocket);
+				communicator.method.websocket();
 				break;
 		}
 
@@ -288,7 +280,7 @@ function settingManager(){
 				
 			}
 
-		}
+		};
 
 		/*
 		 *	Init function
@@ -308,9 +300,9 @@ function settingManager(){
 	
 			$("#settings_tab").css("background-color",self.selected);
 
-		}
+		};
 
-	}
+	};
 }
 
 settingManager.prototype = {
@@ -358,7 +350,7 @@ var view = new function (){
 
 	this.setting = new settingManager();
 
-}
+};
 
 
 
@@ -404,7 +396,7 @@ var init = function (){
 	 */
 	view.message.add("Cyrille","Coucou",id2);
 	view.message.add("Fred","Bonjour",id2);
-}
+};
 
 
 /*

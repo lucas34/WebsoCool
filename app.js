@@ -10,7 +10,8 @@ var routes = require('./routes/index');
 var api = require('./routes/api');
 
 var app = express();
-var io = require('socket.io').listen(5000);
+var server = app.listen(7070);
+var io = require('socket.io').listen(server);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,32 +35,6 @@ app.use(function(req, res, next) {
     next(err);
 });
 
-// error handlers
-
-// development error handler
-// will print stacktrace
-/*
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-}
-
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
-});
-*/
 // --------- Socket ------------
 (function() {
     io.on('connection', function (socket) {
@@ -95,9 +70,6 @@ app.use(function(err, req, res, next) {
     });
 
 }());
-
 // --------- Socket ------------
-
-app.listen(7070);
 
 module.exports = app;
