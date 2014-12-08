@@ -2,7 +2,7 @@
  *	Manage rooms
  */
 function roomManager(){
-	this.current = "";
+	this.current = "setting";
 }
 
 roomManager.prototype = {
@@ -226,10 +226,16 @@ formManager.prototype = {
 
 		communicator.createUser(name.htmlEncode(), method_for_create);
 
+		/*
 		$("#create_tab").show();
 
 		$("#username").val("");
 
+
+		view.setting.hide();
+
+		view.room.set('0');
+*/
 	}
 };
 
