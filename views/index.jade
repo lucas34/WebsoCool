@@ -1,8 +1,8 @@
 extends layout
 
 block content
-  h2 
-    b #{title} Chat
+  h2
+    b(id="title") #{title} Chat
   div(style="height:100%")
     div(class="section group")
       div(id="settings_tab", class="col span_1_of_12 room",onclick="view.setting.show()") Settings

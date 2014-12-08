@@ -206,36 +206,33 @@ formManager.prototype = {
 
 		var name =  $("#username").val();
 		var method = $('input[name=method]:checked').val();
+		var title = $("#title").html();
 		var method_for_create;
 		switch(method){
 			case "polling":
+				$("#title").html(title +" : " + "Polling")
 				method_for_create = communicator.method.polling;
 				break;
 
 			case "long":
+				$("#title").html(title +" : " + "Long polling")
 				method_for_create = communicator.method.long_polling;
 				break;
 
 			case "push":
+				$("#title").html(title +" : " + "Push")
 				method_for_create =communicator.method.websocket;
 				break;
 
 			default:
 				method_for_create = communicator.method.polling;
 		}
-
+		
 		communicator.createUser(name.htmlEncode(), method_for_create);
 
-		/*
 		$("#create_tab").show();
-
 		$("#username").val("");
 
-
-		view.setting.hide();
-
-		view.room.set('0');
-*/
 	}
 };
 
