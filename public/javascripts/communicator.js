@@ -40,7 +40,6 @@ var communicator = new function () {
                 }).done(function (data) {
                     last_update = data.date;
 
-                    console.log(data.users);
                     data.users.forEach(function (user) {
                         communicator.onNewUser(user, 0);
                     });
@@ -131,7 +130,6 @@ var communicator = new function () {
         self.websocket = function () {
             clear();
 
-            console.log( { id : user.id });
             socket.emit('subscribe', { user : user.id });
         };
     }(self);
@@ -198,10 +196,6 @@ var communicator = new function () {
      */
 
     self.onMessage = function (from_id, chat_id, content) {
-        console.log(from_id);
-        console.log(chat_id);
-        console.log(content);
-
         view.message.add(from_id, chat_id, content);
     };
 
