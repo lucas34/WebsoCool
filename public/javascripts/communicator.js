@@ -13,7 +13,6 @@ var communicator = new function () {
                     url: "/api/rooms",
                     data: {last_update: last_update, user: user.id}
                 }).done(function (data) {
-                    console.log(data);
                     last_update = data.date;
 
                     data.rooms.forEach(function (room) {
@@ -26,7 +25,7 @@ var communicator = new function () {
 
             setInterval(function () {
                 check_room();
-            }, 10000);
+            }, 5000);
 
         })();
 
@@ -43,7 +42,6 @@ var communicator = new function () {
 
                     console.log(data.users);
                     data.users.forEach(function (user) {
-                        console.log(user);
                         communicator.onNewUser(user, 0);
                     });
                 });
@@ -53,7 +51,7 @@ var communicator = new function () {
 
             setInterval(function () {
                 check_user();
-            }, 10000);
+            }, 5000);
         })();
     };
 
@@ -75,14 +73,8 @@ var communicator = new function () {
         };
 
         (function () {
-            socket.on('init', function (messages) {
-                messages.forEach(function (message) {
-                    communicator.onMessage(message.from, room, message.content)
-                });
-            });
-
             socket.on('message', function (message) {
-                communicator.onMessage(message.from, room, message.content)
+                communicator.onMessage(message.from, {  id : message.room }, message.content)
             });
         })(); // Socket init
 
@@ -103,7 +95,7 @@ var communicator = new function () {
                         });
                     });
                 });
-            }, 1000); // 1s
+            }, 5000); // 1s
         };
 
         self.long_polling = function () {
@@ -133,13 +125,14 @@ var communicator = new function () {
                         pending[room.id](room);
                     }
                 });
-            }, 5000);
+            }, 10000);
         };
 
         self.websocket = function () {
             clear();
 
-            socket.emit('subscribe', { id : user.id });
+            console.log( { id : user.id });
+            socket.emit('subscribe', { user : user.id });
         };
     }(self);
 
@@ -151,7 +144,7 @@ var communicator = new function () {
      *
      */
 
-    self.createUser = function (name) {
+    self.createUser = function (name, method) {
         if(user.id === undefined) {
             $.ajax({
                 type: "POST",
@@ -161,6 +154,7 @@ var communicator = new function () {
                 if(data.id !== -1) {
                     user.id = data.id;
                     user.name = name;
+                    method();
                 }
                 start_session();
             });
@@ -190,8 +184,7 @@ var communicator = new function () {
                 data: { name: name, user: user.id }
             }).done(function(data) {
                 if(data !== null) {
-                    /*var r = new room(data.id, name);
-                     self.onNewRoom(r);*/
+                    console.log("ok");
                 }
             });
         }
@@ -205,6 +198,10 @@ var communicator = new function () {
      */
 
     self.onMessage = function (from_id, chat_id, content) {
+        console.log(from_id);
+        console.log(chat_id);
+        console.log(content);
+
         view.message.add(from_id, chat_id, content);
     };
 

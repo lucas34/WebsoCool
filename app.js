@@ -42,29 +42,21 @@ app.use(function(req, res, next) {
             var user = chat.getUser(data.user);
 
             if (user !== undefined) {
-                var messages = [];
-                user.rooms.forEach(function (room) {
-                    room.messages.forEach(function (message) {
-                        messages.push(message);
-                    });
-                });
 
-                chat.onMessage[user.id] = function (message) {
-                    var room = message.room;
+                chat.subscribe(user.id, function (room, message) {
 
-                    if (user.rooms.contains(room)) {
-                        socket.emit('message', message);
+                    if (user.rooms[room.id] !== undefined) {
+                        socket.emit('message', message.simplify());
                     }
-                };
-
-                socket.emit('init', messages);
+                });
             }
         });
 
         socket.on('unsubscribe', function (data) {
             var user = chat.getUser(data.user);
+
             if (user !== undefined) {
-                delete chat.onMessage[user.id];
+                chat.unsubscribe(user.id);
             }
         });
     });
