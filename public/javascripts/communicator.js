@@ -40,8 +40,8 @@ var communicator = new function () {
                 }).done(function (data) {
                     last_update = data.date;
 
-                    data.users.forEach(function (user) {
-                        communicator.onNewUser(user, 0);
+                    data.usersInRooms.forEach(function (userInRoom) {
+                        communicator.onNewUser(userInRoom.user, userInRoom.room.id);
                     });
                 });
             };
@@ -153,6 +153,11 @@ var communicator = new function () {
                     user.id = data.id;
                     user.name = name;
                     method();
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/post/user",
+                        data: { room: 0, user: user.id }
+                    })
                 }
                 start_session();
             });
@@ -179,10 +184,18 @@ var communicator = new function () {
             $.ajax({
                 type: "POST",
                 url: "/api/create/room",
-                data: { name: name, user: user.id }
+                data: { name: name }
             }).done(function(data) {
-                if(data !== null) {
-                    console.log("ok");
+                if(data.id !== undefined) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/post/user",
+                        data: { room: data.id, user: user.id }
+                    }).done(function(data) {
+                        if(data.successful) {
+                            console.log("cool");
+                        }
+                    });
                 }
             });
         }

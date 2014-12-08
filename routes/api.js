@@ -61,7 +61,7 @@ router.get('/users', function(req, res) {
     res.send(null);
   }
   else {
-    res.send(chat.getListOfUsersFrom(last_update));
+    res.send(chat.getListOfUsersInRoomsFrom(last_update));
   }
 });
 
@@ -69,7 +69,10 @@ router.get('/users', function(req, res) {
 router.post('/create/room', function(req, res) {
   var name = req.body.name;
 
+  console.log("ici");
+
   if(name !== undefined) {
+    console.log("la");
     var room = chat.createRoom(name);
     res.send({ id : room.id });
   }
@@ -87,6 +90,19 @@ router.post('/create/user', function(req, res) {
   }
   else {
     res.send(null);
+  }
+});
+
+router.post('/post/user', function(req, res) {
+  var user = req.body.user;
+  var room = req.body.room;
+
+  if ((user === undefined) || (room === undefined)) {
+    res.send({ successful: false});
+  }
+  else {
+    chat.addUserInRoom(user, room);
+    res.send({ successful: true});
   }
 });
 

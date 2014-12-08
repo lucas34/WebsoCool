@@ -268,11 +268,12 @@ function settingManager(){
 					}
 				})
 
-			}
+			};
+
 			this.selected = function(){
 				self.selected = $("#color_selected").val();
 				$("#settings_tab").css("background-color",self.selected);
-			}
+			};
 
 			this.tab = function(){
 				var oldColor = self.tab;
@@ -308,7 +309,6 @@ function settingManager(){
 			$("#settings_tab").css("background-color",self.selected);
 
 		};
-
 	};
 }
 
@@ -339,8 +339,7 @@ settingManager.prototype = {
 		$("#settings_tab").css("background-color",view.setting.color.tab);
 
 	}
-
-}
+};
 
 
 /*
