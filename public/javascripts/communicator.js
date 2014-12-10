@@ -20,7 +20,7 @@ var communicator = new function () {
                 }).done(function (data) {
                     if(data.length == 0) return;
                     data.forEach(function (room) {
-						bool = isOnArray = false;
+						var isOnArray = false;
 						for(var i = 0;i<rooms.length;i++){
 							if(rooms[i].id == room.id){
 								isOnArray = true;
