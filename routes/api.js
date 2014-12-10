@@ -53,14 +53,7 @@ router.get('/rooms', function(req, res) {
 });
 
 router.get('/users', function(req, res) {
-  var last_update = req.query.last_update;
-
-  if (last_update === undefined) {
-    res.send(null);
-  }
-  else {
-    res.send(chat.getListOfUsersInRoomsFrom(last_update));
-  }
+    res.send(chat.getListOfUsersInRoomsFrom());
 });
 
 /* Create room, user & message */

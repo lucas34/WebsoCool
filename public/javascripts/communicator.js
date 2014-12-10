@@ -1,15 +1,16 @@
 var communicator = new function () {
     var self = this;
     var socket = io.connect('http://localhost:7070');
-	var check_room_timeout = 1000;
-	var check_user_timeout = 1000;
+    var check_room_timeout = 1000;
+    var check_user_timeout = 1000;
+    var rooms_state = {};
 
     var start_session = function () {
 
         (function () {
 
-			var isOnLoadRoom = false;
-			var isOnLoadUser = false;
+            var isOnLoadRoom = false;
+            var isOnLoadUser = false;
 
             var check_room = function () {
                 $.ajax({
@@ -17,50 +18,57 @@ var communicator = new function () {
                     url: "/api/rooms",
                     data: {user: user.id}
                 }).done(function (data) {
-					if(data.length == 0) return;
-                    data.forEach(function (room) { 
-						if(rooms[room.id] === undefined) {
-							rooms.push(room);
-							communicator.onNewRoom(room);
-						}
+                    if(data.length == 0) return;
+                    data.forEach(function (room) {
+                        if(rooms[room.id] === undefined) {
+                            rooms.push(room);
+                            rooms_state[room.id] = {};
+                            communicator.onNewRoom(room);
+                        }
                     });
                 }).always(function () {
-					isOnLoadRoom = false;
-				});
+                    isOnLoadRoom = false;
+                });
             };
 
-			last_update_user = 0;
+            last_update_user = 0;
             var check_user = function () {
                 $.ajax({
                     type: "GET",
                     url: "/api/users",
-                    data: {last_update: last_update_user}
+                    data: {}
                 }).done(function (data) {
-					last_update_user = data.date
-					if(data.usersInRoomslength == 0) return;
-                    data.usersInRooms.forEach(function (userInRoom) {
-                        communicator.onNewUser(userInRoom.user, userInRoom.room.id);
+
+                    data.forEach(function (userInRoom) {
+                        var room = rooms_state[userInRoom.room.id];
+
+                        if(room !== undefined) {
+                            if(room[userInRoom.user.id] === undefined) {
+                                room[userInRoom.user.id] = true;
+                                communicator.onNewUser(userInRoom.user, userInRoom.room.id);
+                            }
+                        }
                     });
                 }).always(function () {
-					isOnLoadUser = false;
-				});
+                    isOnLoadUser = false;
+                });
             };
 
-			setInterval(function () {
-				if(!isOnLoadRoom && !isOnLoadUser){
-					isOnLoadRoom = true;
-					isOnLoadUser = true;
+            setInterval(function () {
+                if(!isOnLoadRoom && !isOnLoadUser){
+                    isOnLoadRoom = true;
+                    isOnLoadUser = true;
 
-					check_room();
-           		    check_user();
+                    check_room();
+                    check_user();
 
-				}
+                }
             }, check_user_timeout);
 
         })();
 
 
-		
+
     };
 
     self.method = new function(communicator) {
@@ -95,7 +103,7 @@ var communicator = new function () {
                         type: "GET",
                         url: "/api/messages/polling",
                         data: { last_update: communicator.last_update, room: room.id }
-                    }).done(function(data) {	
+                    }).done(function(data) {
                         communicator.last_update = data.date;
 
                         data.messages.forEach(function(message) {
@@ -195,23 +203,23 @@ var communicator = new function () {
                 data: { name: name }
             }).done(function(data) {
                 if(data.id !== undefined) {
-					self.addUserInRoom(user, data);
+                    self.addUserInRoom(user, data);
                 }
             });
         }
     };
 
-	self.addUserInRoom = function (user, room) {
-		$.ajax({
-        	type: "POST",
+    self.addUserInRoom = function (user, room) {
+        $.ajax({
+            type: "POST",
             url: "/api/post/user",
             data: { room: room.id, user: user.id }
         }).done(function(data) {
-        	if(data.successful) {
-        		console.log("cool");
-        	}
- 		});
-	}
+            if(data.successful) {
+                console.log("cool");
+            }
+        });
+    }
 
 
     /*

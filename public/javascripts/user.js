@@ -12,7 +12,8 @@ function room(id, name, bool){
 	
 	this.id = id;
 	this.name = name;
-	this.voidable = bool
+	this.voidable = bool;
+	this.users = {};
 }
 
 
