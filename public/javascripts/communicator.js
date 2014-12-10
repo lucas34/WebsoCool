@@ -68,7 +68,8 @@ var communicator = new function () {
 
             pending = {};
 
-            socket.emit('unsubscribe', { id : user.id });
+			console.log("unsbuscribe");
+            socket.emit('unsubscribe', { user : user.id });
 
             interval_id = null;
         };

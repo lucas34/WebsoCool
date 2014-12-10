@@ -53,9 +53,11 @@ app.use(function(req, res, next) {
         });
 
         socket.on('unsubscribe', function (data) {
+			console.log("J'unsubscribbe ; "+data);
             var user = chat.getUser(data.user);
 
             if (user !== undefined) {
+				console.log("le user : "+user);
                 chat.unsubscribe(user.id);
             }
         });

@@ -29,8 +29,10 @@ block content
         input(type="color",id="color_notify",onchange="view.setting.color.update.notification()")
         <br /><br />Selected : 
         input(type="color",id="color_selected",onchange="view.setting.color.update.selected()")
-        <br /><br /><hr />Utilisateur :<br /> 
-        input(type="text",id="username")
+        <br /><br /><hr />
+        div(id="user_form")
+          span Utilisateur :<br /> 
+          input(type="text",id="username")
         <br /><br />Type transfert :<br /><br /> 
         input(type="radio",value="polling",name="method")
         span Polling<br />

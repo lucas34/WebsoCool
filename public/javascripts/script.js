@@ -208,9 +208,35 @@ formManager.prototype = {
 
 	logIn : function(){
 
+		var method = $('input[name=method]:checked').val();
+		var title = "Express Chat";
+		
+		if(user.id != undefined){
+			switch(method){
+			case "polling":
+				$("#title").html(title +" : " + "Polling")
+				communicator.method.polling();
+				break;
+
+			case "long":
+				$("#title").html(title +" : " + "Long polling")
+				communicator.method.long_polling();
+				break;
+
+			case "push":
+				$("#title").html(title +" : " + "Push")
+				 communicator.method.websocket();
+				break;
+
+			default:
+				communicator.method.polling();
+			}
+
+			return;
+		}
+
 		var name =  $("#username").val();
 		var method = $('input[name=method]:checked').val();
-		var title = $("#title").html();
 		var method_for_create;
 		switch(method){
 			case "polling":
@@ -225,7 +251,7 @@ formManager.prototype = {
 
 			case "push":
 				$("#title").html(title +" : " + "Push")
-				method_for_create =communicator.method.websocket;
+				method_for_create = communicator.method.websocket;
 				break;
 
 			default:
@@ -234,8 +260,8 @@ formManager.prototype = {
 		
 		communicator.createUser(name.htmlEncode(), method_for_create);
 
+		$("#user_form").remove();
 		$("#create_tab").show();
-		$("#username").val("");
 
 	}
 };
