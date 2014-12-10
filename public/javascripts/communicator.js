@@ -20,7 +20,14 @@ var communicator = new function () {
                 }).done(function (data) {
                     if(data.length == 0) return;
                     data.forEach(function (room) {
-                        if(rooms[room.id] === undefined) {
+						bool = isOnArray = false;
+						for(var i = 0;i<rooms.length;i++){
+							if(rooms[i].id == room.id){
+								isOnArray = true;
+								break;
+							}
+						}
+                        if(!isOnArray) {
                             rooms.push(room);
                             rooms_state[room.id] = {};
                             communicator.onNewRoom(room);
@@ -129,7 +136,8 @@ var communicator = new function () {
                                 communicator.last_update = data.date;
 
                                 data.messages.forEach(function(message) {
-                                    communicator.onMessage(message.from, room.id, message.content)
+									console.log("J'ajoute le message à : "+message.room);
+                                    communicator.onMessage(message.from, message.room, message.content)
                                 });
                             }).always(function () {
                                 if (pending[room.id]) {
