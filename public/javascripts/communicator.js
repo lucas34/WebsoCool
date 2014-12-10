@@ -20,7 +20,7 @@ var communicator = new function () {
 					if(data.length == 0) return;
                     data.forEach(function (room) { 
 						if(rooms[room.id] === undefined) {
-							rooms[room.id] = data;
+							rooms.push(room);
 							communicator.onNewRoom(room);
 						}
                     });
