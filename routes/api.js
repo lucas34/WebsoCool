@@ -43,9 +43,8 @@ router.get('/messages/long-polling', function(req, res) {
 /* Get new rooms & users */
 router.get('/rooms', function(req, res) {
   var user = req.query.user;
-  var last_update = req.query.last_update;
 
-  if ((user === undefined) || (last_update === undefined)) {
+  if (user === undefined) {
     res.send(null);
   }
   else {

@@ -16,12 +16,6 @@ roomManager.prototype = {
 			master = false;
 		}
 
-		/*
-		if(jQuery.inArray(id,rooms) != -1){
-			alert('Room already exist !!');
-			return;
-		}*/
-
 		// Create tab
 		var formatID = "'"+id+"'";
 		var onClick = 'view.room.remove('+formatID+')';

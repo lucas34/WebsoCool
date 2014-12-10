@@ -1,59 +1,66 @@
 var communicator = new function () {
     var self = this;
     var socket = io.connect('http://localhost:7070');
+	var check_room_timeout = 1000;
+	var check_user_timeout = 1000;
 
     var start_session = function () {
 
         (function () {
-            var last_update = 0;
+
+			var isOnLoadRoom = false;
+			var isOnLoadUser = false;
 
             var check_room = function () {
                 $.ajax({
                     type: "GET",
                     url: "/api/rooms",
-                    data: {last_update: last_update, user: user.id}
+                    data: {user: user.id}
                 }).done(function (data) {
-					//last_update = data.date;
-
+					if(data.length == 0) return;
                     data.forEach(function (room) { 
 						if(rooms[room.id] === undefined) {
+							rooms[room.id] = data;
 							communicator.onNewRoom(room);
 						}
                     });
-                });
+                }).always(function () {
+					isOnLoadRoom = false;
+				});
             };
 
-            check_room();
-
-            setInterval(function () {
-                check_room();
-            }, 5000);
-
-        })();
-
-        (function () {
-            var last_update = 0;
-
+			last_update_user = 0;
             var check_user = function () {
                 $.ajax({
                     type: "GET",
                     url: "/api/users",
-                    data: {last_update: last_update}
+                    data: {last_update: last_update_user}
                 }).done(function (data) {
-                    last_update = data.date;
-
+					last_update_user = data.date
+					if(data.usersInRoomslength == 0) return;
                     data.usersInRooms.forEach(function (userInRoom) {
                         communicator.onNewUser(userInRoom.user, userInRoom.room.id);
                     });
-                });
+                }).always(function () {
+					isOnLoadUser = false;
+				});
             };
 
-            check_user();
+			setInterval(function () {
+				if(!isOnLoadRoom && !isOnLoadUser){
+					isOnLoadRoom = true;
+					isOnLoadUser = true;
 
-            setInterval(function () {
-                check_user();
-            }, 5000);
+					check_room();
+           		    check_user();
+
+				}
+            }, check_user_timeout);
+
         })();
+
+
+		
     };
 
     self.method = new function(communicator) {
@@ -68,7 +75,6 @@ var communicator = new function () {
 
             pending = {};
 
-			console.log("unsbuscribe");
             socket.emit('unsubscribe', { user : user.id });
 
             interval_id = null;
@@ -89,7 +95,7 @@ var communicator = new function () {
                         type: "GET",
                         url: "/api/messages/polling",
                         data: { last_update: communicator.last_update, room: room.id }
-                    }).done(function(data) {
+                    }).done(function(data) {	
                         communicator.last_update = data.date;
 
                         data.messages.forEach(function(message) {
@@ -97,7 +103,7 @@ var communicator = new function () {
                         });
                     });
                 });
-            }, 5000); // 1s
+            }, 1000); // 1s
         };
 
         self.long_polling = function () {
@@ -169,8 +175,6 @@ var communicator = new function () {
 
     self.sendMessage = function (content, room) {
 
-		console.log("Communicator : "+room);
-
         if(user.id !== null) {
             $.ajax({
                 type: "POST",
@@ -226,9 +230,6 @@ var communicator = new function () {
     };
 
     self.onNewRoom = function (room) {
-console.log("new room");
-console.log(room);
-        rooms.push(room);
         view.room.add(room);
     };
 
