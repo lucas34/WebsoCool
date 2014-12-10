@@ -13,10 +13,12 @@ var communicator = new function () {
                     url: "/api/rooms",
                     data: {last_update: last_update, user: user.id}
                 }).done(function (data) {
-                    last_update = data.date;
+					//last_update = data.date;
 
-                    data.rooms.forEach(function (room) {
-                        communicator.onNewRoom(room);
+                    data.forEach(function (room) { 
+						if(rooms[room.id] === undefined) {
+							communicator.onNewRoom(room);
+						}
                     });
                 });
             };
@@ -73,7 +75,7 @@ var communicator = new function () {
 
         (function () {
             socket.on('message', function (message) {
-                communicator.onMessage(message.from, {  id : message.room }, message.content)
+                communicator.onMessage(message.from, message.room, message.content)
             });
         })(); // Socket init
 
@@ -90,7 +92,7 @@ var communicator = new function () {
                         communicator.last_update = data.date;
 
                         data.messages.forEach(function(message) {
-                            communicator.onMessage(message.from, room, message.content)
+                            communicator.onMessage(message.from, room.id, message.content)
                         });
                     });
                 });
@@ -112,7 +114,7 @@ var communicator = new function () {
                                 communicator.last_update = data.date;
 
                                 data.messages.forEach(function(message) {
-                                    communicator.onMessage(message.from, room, message.content)
+                                    communicator.onMessage(message.from, room.id, message.content)
                                 });
                             }).always(function () {
                                 if (pending[room.id]) {
@@ -165,7 +167,8 @@ var communicator = new function () {
     };
 
     self.sendMessage = function (content, room) {
-        room = room || 0;
+
+		console.log("Communicator : "+room);
 
         if(user.id !== null) {
             $.ajax({
@@ -187,19 +190,23 @@ var communicator = new function () {
                 data: { name: name }
             }).done(function(data) {
                 if(data.id !== undefined) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/api/post/user",
-                        data: { room: data.id, user: user.id }
-                    }).done(function(data) {
-                        if(data.successful) {
-                            console.log("cool");
-                        }
-                    });
+					self.addUserInRoom(user, data);
                 }
             });
         }
     };
+
+	self.addUserInRoom = function (user, room) {
+		$.ajax({
+        	type: "POST",
+            url: "/api/post/user",
+            data: { room: room.id, user: user.id }
+        }).done(function(data) {
+        	if(data.successful) {
+        		console.log("cool");
+        	}
+ 		});
+	}
 
 
     /*
@@ -218,6 +225,8 @@ var communicator = new function () {
     };
 
     self.onNewRoom = function (room) {
+console.log("new room");
+console.log(room);
         rooms.push(room);
         view.room.add(room);
     };

@@ -49,8 +49,7 @@ router.get('/rooms', function(req, res) {
     res.send(null);
   }
   else {
-    rooms = chat.getListOfRoomsFrom(last_update, user);
-    res.send(rooms);
+    res.send(chat.getListOfRoomsByUser(user));
   }
 });
 

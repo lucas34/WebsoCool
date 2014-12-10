@@ -41,7 +41,6 @@ h2 {
 .left {
 	border-right: 1px solid black;
 	height:100%;
-	overflow:auto;
 	background-color:#fff
 }
 
@@ -84,3 +83,6 @@ h2 {
 }
 }
 
+.scroll{
+	overflow:auto;
+}

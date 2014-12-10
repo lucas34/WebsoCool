@@ -25,7 +25,7 @@ roomManager.prototype = {
 		// Create tab
 		var formatID = "'"+id+"'";
 		var onClick = 'view.room.remove('+formatID+')';
-		var html = '<div class="col span_1_of_12 room" style="background-color:'+view.setting.color.tab+'" id="tab_room_'+id+'">';
+		var html = '<div class="col span_1_of_12 room" nb="'+id+'" style="background-color:'+view.setting.color.tab+'" id="tab_room_'+id+'">';
 			html += '<span onclick="view.room.set('+formatID+')">'+name+'</span>';
 		
 		if(master){
@@ -35,6 +35,8 @@ roomManager.prototype = {
 		}
 	
 		$("#rooms").append(html);
+
+		addDrop();
 
 		// Create People block
 		var html2 = '<div id="peoples_room_'+id+'"></div>';
@@ -148,13 +150,15 @@ userManager.prototype = {
 	},
 
 	addInRoom : function(user,room){
-		var html = '<div class="' + user.name + '"> <img src="images/friend.png" /><span>' + user.name + '</span></div>';
+		var html = '<div class="' + user.name + ' drag_user" user_id="'+user.id+'" draggable="true"> <img src="images/friend.png" /><span>' + user.name + '</span></div>';
 		$('#peoples_room_' + room).append(html);
+		addDrop();
 	},
 
 	removeInRoom : function(username, room){
 		$("#peoples_room_" + room).find("."+username).remove();
 	}
+
 };
 
 /*
@@ -170,10 +174,10 @@ messageManager.prototype = {
 	},
 
 	add: function (from, room, content) {
-		$("#messages_room_" + room.id).append("<b>" + view.user.users[from].name + "</b> : " + content + "<br />");
+		$("#messages_room_" + room).append("<b>" + view.user.users[from].name + "</b> : " + content + "<br />");
 
-		if (view.room.current != room.id) {
-			view.room.notify(room.id);
+		if (view.room.current != room) {
+			view.room.notify(room);
 		}
 	}
 };
@@ -347,8 +351,6 @@ settingManager.prototype = {
  */
 var view = new function (){
 
-	var self = this;
-
 	this.room =  new roomManager();
 	this.user = new userManager();
 	this.message = new messageManager();
@@ -432,3 +434,43 @@ $("#message").keypress(function(event) {
 });
 
 
+
+
+
+
+var isOnDrag = false;
+var userOnDrag = undefined;
+
+function addDrop(){
+
+	$(".drag_user").draggable({revert:true,
+
+		drag: function(){
+
+			if(!isOnDrag){
+				$("#left_box").removeClass('scroll');
+				isOnDrag = true;
+				userOnDrag = $(this).attr('user_id');
+			}
+	 }
+
+});
+
+
+$(".room").droppable({
+	drop:function(event, ui){	
+		var id_room = $(this).attr('nb');
+		communicator.addUserInRoom({id:userOnDrag},{id:id_room});
+
+	}
+});
+
+}
+
+
+$(document).mouseup(function() {
+	if(isOnDrag){
+		$("#left_box").addClass('scroll');
+		isOnDrag = false;
+	}
+});
