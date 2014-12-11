@@ -149,7 +149,7 @@ var communicator = new function () {
                         pending[room.id](room);
                     }
                 });
-            }, 10000);
+            }, 500);
         };
 
         self.websocket = function () {
